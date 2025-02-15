@@ -1,0 +1,88 @@
+import { usePage } from '@inertiajs/react';
+import Conversation from './Conversation';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
+import { useEffect, useState } from 'react';
+import TextInput from '@/Components/TextInput';
+import Echo from "../echo";
+
+const Sidebar = () => {
+
+    const page = usePage();
+    const [conversations, setConversations] = useState([]);
+    const selectedConversation = page.props.selectedConversation;
+    const [sortedConversation, setSortedConversation] = useState([]);
+    const [localConversation, setLocalConversation] = useState([]);
+
+    const [onlineUsers, setOnlineUsers] = useState([]);
+
+    // Handle WebSocket Users
+    useEffect(() => {
+        Echo.join('online')
+            .here((users) => setOnlineUsers(users))
+            .joining((user) => console.log('joining', user))
+            .leaving((user) => console.log('leaving', user))
+            .error((error) => console.error(error));
+    }, []);
+
+    const isUserOnline = (userId) => {
+        return onlineUsers.some((user) => user.id === userId);
+    };
+
+    // Sorting Conversations
+    useEffect(() => {
+        const sorted = [...localConversation].sort((a, b) => {
+            if (a.blocked_at && b.blocked_at) return a.blocked_at > b.blocked_at ? -1 : 1;
+            if (a.blocked_at) return 1;
+            if (b.blocked_at) return -1;
+            if (a.last_message_date && b.last_message_date) return b.last_message_date.localeCompare(a.last_message_date);
+            if (a.last_message_date) return -1;
+            if (b.last_message_date) return 1;
+            return 0;
+        });
+        setSortedConversation(sorted);
+    }, [localConversation]);
+
+    // Handle Search
+    const onSearch = (e) => {
+        const search = e.target.value.toLowerCase();
+        const filteredConversations = conversations.filter((conversation) =>
+            conversation.name.toLowerCase().includes(search)
+        );
+        setLocalConversation(filteredConversations);
+    };
+
+    useEffect(() => {
+        if (page.props.auth.conversations) {
+            setLocalConversation(page.props.auth.conversations);
+        }
+    }, [page.props.auth.conversations]);
+
+    return (
+        <>
+            <div className='w-96 h-[91vh] flex flex-col bg-white'>
+                <div className=' w-9/12 mx-auto text-base-content flex justify-between'>
+                    <h1 className='text-2xl font-bold'>Chat</h1>
+                    <EllipsisVerticalIcon className='h-5 w-5' />
+                </div>
+
+                <div className="w-9/12 my-5 mx-auto">
+                    <TextInput
+                        onKeyUp={onSearch} type='text' placeholder='Search' className='w-full' />
+                </div>
+
+                <div className='overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200'>
+                    {sortedConversation && sortedConversation.map((conversation, index) => (
+                        <Conversation
+                            key={conversation.is_group ? `group_${conversation.id}` : `user_${conversation.id}`}
+                            isUserOnline={conversation?.id ? isUserOnline(conversation.id) : false}
+                            conversation={conversation}
+                            selectedConversation={selectedConversation} />
+                    ))}
+
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default Sidebar;
