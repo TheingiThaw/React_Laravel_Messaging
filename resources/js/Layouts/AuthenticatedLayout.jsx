@@ -9,6 +9,8 @@ function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
+    console.log('mounted')
+
     return (
         <>
             <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -94,39 +96,6 @@ function AuthenticatedLayout({ header, children }) {
     );
 }
 
-// ✅ Corrected layout function
 AuthenticatedLayout.layout = (page) => <AuthenticatedLayout>{page}</AuthenticatedLayout>;
 
 export default AuthenticatedLayout;
-
-
-
-
-// <div className = "navbar container mx-auto bg-base-100" >
-//         <div className="flex-1">
-//             <a href='index.html' className="btn btn-ghost text-xl">daisyUI</a>
-//         </div>
-//         <div className="flex-none">
-//             <div className="dropdown dropdown-end">
-//                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-//                     <div className="w-10 rounded-full">
-//                         <img
-//                             alt="Tailwind CSS Navbar component"
-//                             src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-//                     </div>
-//                 </div>
-//                 <ul
-//                     tabIndex={0}
-//                     className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-//                     <li>
-//                         <a href='#' className="justify-between">
-//                             Profile
-//                             <span className="badge">New</span>
-//                         </a>
-//                     </li>
-//                     <li><a href='index.html'>Settings</a></li>
-//                     <li><a href='index.html'>Logout</a></li>
-//                 </ul>
-//             </div>
-//         </div>
-// </div >

@@ -12,7 +12,7 @@ const UserAvatar = ({ conversation, isUserOnline }) => {
             {!conversation.avatar &&
                 <div className={`avatar ${onlineStatus} placeholder`}>
                     <div className="bg-neutral text-neutral-content w-12 rounded-full">
-                        <span className="text-xl">{conversation.name.substring(0, 1)}</span>
+                        <span className="text-xl">{conversation.name && conversation.name.substring(0, 1)}</span>
                     </div>
                 </div>}
         </div>

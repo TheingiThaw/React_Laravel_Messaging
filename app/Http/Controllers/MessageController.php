@@ -13,39 +13,50 @@ use App\Http\Resources\MessageResource;
 class MessageController extends Controller
 {
     //
-
-    public function byUser(User $user){
-
+    public function byUser(User $user)
+    {
         if (!$user || !($user instanceof User)) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        // Query for messages
+        // Ensure valid query result
         $messages = Message::where(function ($query) use ($user) {
-            $query->where('sender_id', auth()->id())
-                  ->where('receiver_id', $user->id);
-        })
-        ->orWhere(function ($query) use ($user) {
-            $query->where('sender_id', $user->id)
-                  ->where('receiver_id', auth()->id());
-        })
-        ->latest()
-        ->paginate(10);
+                $query->where('sender_id', auth()->id())
+                      ->where('receiver_id', $user->id);
+            })
+            ->orWhere(function ($query) use ($user) {
+                $query->where('sender_id', $user->id)
+                      ->where('receiver_id', auth()->id());
+            })
+            ->latest()
+            ->paginate(10);
 
-        Log::info('Messages Pagination:', ['messages' => $messages]);
-        Log::info('Selected Conversation:', ['selectedConversation' => $user->toConversationArray()]);
-
-        // Debugging: Check if messages exist
-        if ($messages->isEmpty()) {
+        if (!$messages || $messages->isEmpty()) {
             Log::warning('No messages found for user:', ['user_id' => $user->id]);
+            return response()->json(['error' => 'No messages found'], 404);
+        }
+
+        // Check if pagination returns a valid object
+        if (!($messages instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) {
+            Log::error('Messages pagination failed.');
+            return response()->json(['error' => 'Pagination failed'], 500);
+        }
+
+        // Ensure first message exists before calling `first()`
+        $firstMessage = $messages->first();
+        if (!$firstMessage) {
+            Log::warning('First message is null.', ['user_id' => $user->id]);
             return response()->json(['error' => 'No messages found'], 404);
         }
 
         return inertia('Home', [
             'selectedConversation' => $user->toConversationArray(),
-            'messages' => MessageResource::collection($messages)
+            'messages' => $messages->items(),
         ]);
+
     }
+
+
 
     public function byGroup(Group $group){
         $messages = Message::where('group_id', $group->id)
@@ -54,7 +65,7 @@ class MessageController extends Controller
 
         return inertia('Home', [
             'selectedConversation' => $group->toConversationArray(),
-            'messages' => MessageResource::collection($messages->getCollection())
+            'messages' => $messages->items()
         ]);
     }
 

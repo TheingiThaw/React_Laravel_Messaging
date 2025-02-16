@@ -1,17 +1,14 @@
-
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Home from './Home';
 
-function Dashboard() {
-    return (
-        <></>
-    );
-}
+const Dashboard = ({ children, ...props }) => {
+    return <Home {...props}>{children}</Home>;
+};
 
-Dashboard.layout = page => (
+Dashboard.layout = (page) => (
     <AuthenticatedLayout>
-        <Home children={page} />
+        <Dashboard {...page.props}>{page}</Dashboard>
     </AuthenticatedLayout>
-)
+);
 
 export default Dashboard;
