@@ -36,7 +36,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                 )}
 
 
-                <MessageInput />
+                <MessageInput conversation={selectedConversation} />
             </div>}
         </>
     )

@@ -2,13 +2,11 @@ import { EllipsisVerticalIcon } from "@heroicons/react/16/solid";
 import { usePage } from "@inertiajs/react";
 import UserAvatar from "./UserAvatar";
 import GroupAvatar from "./GroupAvatar";
+import { formatDateLong } from "@/helpers";
 
 const Message = ({ message, selectedConversation }) => {
     const page = usePage();
     const currentUser = page.props.auth.user;
-
-    console.log(message);
-    console.log(selectedConversation);
 
     return (
         <div className="p-3">
@@ -18,7 +16,7 @@ const Message = ({ message, selectedConversation }) => {
                 </div>
                 <div className="chat-header">
                     {message.sender_id === currentUser.id ? '' : selectedConversation.name}
-                    <time className="text-xs opacity-50">12:45</time>
+                    <time className="text-xs opacity-50">{formatDateLong(new Date(message.created_at))}</time>
                 </div>
                 {message.sender_id !== currentUser.id && (
                     <div className="flex items-center justify-start">

@@ -8,7 +8,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 
 Route::middleware('auth', 'verified')->group(function (){
-    Route::get('/', [HomeController::class, 'home'])->name('Dashboard');
+    Route::get('/', [HomeController::class, 'home'])->name('dashboard');
     Route::get('chat/group/{user}', [MessageController::class,'byGroup'])->name('chat.group');
     Route::get('chat/user/{user}', [MessageController::class,'byUser'])->name('chat.user');
     Route::get('chat/older/{message}', [MessageController::class, 'loadOlder'])->name('chat.loadOlder');

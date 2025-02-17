@@ -3,9 +3,11 @@ import UserAvatar from './UserAvatar'
 import GroupAvatar from './GroupAvatar'
 import UserOptionsDropdown from './UserOptionsDropdown'
 import { Link } from '@inertiajs/react'
+import { formatDateShort } from '@/helpers'
 
 const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
     const classes = {};
+
 
     return (
         <Link
@@ -28,7 +30,7 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
                     <div className='block col-span-3'>
                         <div className='flex justify-between'>
                             <h2 className='text-ellipsis overflow-hidden text-nowrap'>{conversation.name}</h2>
-                            <p className=' text-xs mt-1 text-gray-500'> 13:00 p.m</p>
+                            <p className=' text-xs mt-1 text-gray-500'>{formatDateShort(new Date(conversation.last_message_date))}</p>
                         </div>
                         <p className='text-nowrap overflow-hidden text-ellipsis '>{conversation.last_message ? conversation.last_message : ''}</p>
                     </div>
