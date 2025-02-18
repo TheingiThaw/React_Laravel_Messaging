@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext } from "react";
 
 const EventBusContext = createContext();
 
@@ -8,29 +8,29 @@ export const EventBusProvider = ({ children }) => {
     const emit = (name, data) => {
         if (events[name]) {
             for (let cb of events[name]) {
-                cb(data)
+                cb(data);
             }
         }
     };
 
     const on = (name, cb) => {
         if (!events[name]) {
-            events[name] = []
+            events[name] = [];
         }
         events[name].push(cb);
 
         return () => {
-            events[name] = events[name].filter(callback => callback != cb);
-        }
-    }
+            events[name] = events[name].filter(callback => callback !== cb);
+        };
+    };
 
-    return () => {
-        <EventBusContext.Provider value={{ emit, on }}>{children}</EventBusContext.Provider>
-    }
-}
-
-
+    return (
+        <EventBusContext.Provider value={{ emit, on }}>
+            {children}
+        </EventBusContext.Provider>
+    );
+};
 
 export const useEventBus = () => {
-    React.useContext(EventBusContext)
+    return useContext(EventBusContext);
 };

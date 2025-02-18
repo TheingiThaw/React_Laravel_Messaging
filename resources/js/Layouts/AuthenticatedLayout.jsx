@@ -9,8 +9,9 @@ import { useEventBus } from '@/EventBus';
 function AuthenticatedLayout({ header, children }) {
     const page = usePage();
     const user = page.props.auth.user;
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const conversations = page.user.auth.conversations;
+    const conversations = page.props.auth.conversations;
     const { emit } = useEventBus();
 
     conversations.forEach(conversation => {
@@ -20,11 +21,20 @@ function AuthenticatedLayout({ header, children }) {
             channel = `message.user.${[
                 parseInt(user.id),
                 parseInt(conversation.id)
-            ].sort((a, b) => a - b).join('-')}`;
+            ].sort((a, b) => a - b).join('_')}`;
         }
 
         Echo.private(channel)
             .listen('SocketMessage', (e) => {
+                console.log("Received event:", e); // Debug the e
+
+                if (!e || !e.content) {
+                    console.error("Error: Content is missing in the e", e);
+                    return;
+                }
+
+                // Safe to access content
+                console.log(e.content);
                 const message = e.message;
 
                 emit('message.created', message);
