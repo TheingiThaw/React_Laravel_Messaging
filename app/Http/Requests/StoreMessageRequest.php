@@ -11,7 +11,7 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'message' => 'required',
+            'sender_id' => 'required|exists:users,id',
+            'receiver_id' => 'required_without:group_id|exists:users,id',
+            'group_id' => 'required_without:receiver_id|exists:groups,id',
+            'attachments' => 'array|max:10',
+            'attachments.*' => 'file|max:102400'
         ];
     }
 }
