@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('online', function ($user) {
     return $user ? $user : null;
 });
+
 Broadcast::channel("message.user.{userId1}_{userId2}", function ($user, $userId1, $userId2) {
     return $user && ($user->id === (int) $userId1 || $user->id === (int) $userId2);
 });

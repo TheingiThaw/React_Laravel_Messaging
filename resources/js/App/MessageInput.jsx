@@ -1,9 +1,11 @@
 import { FaceSmileIcon, HandThumbUpIcon, LinkIcon, MicrophoneIcon, PaperAirplaneIcon, PhotoIcon } from "@heroicons/react/16/solid"
+import { usePage } from "@inertiajs/react";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
 
 const MessageInput = ({ conversation }) => {
+    const authUser = usePage().props.auth.user;
     const [newMessage, setNewMessage] = useState('');
     const [inputErrorMsg, setInputErrorMsg] = useState('');
     const [messageSending, setMessageSending] = useState(false);
@@ -25,6 +27,7 @@ const MessageInput = ({ conversation }) => {
 
         console.log(formData);
         formData.append('message', newMessage);
+        formData.append('sender_id', authUser.id);
         if (conversation.is_user) {
             formData.append('receiver_id', conversation.id);
         }
@@ -39,6 +42,7 @@ const MessageInput = ({ conversation }) => {
                 return Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100);
             }
         }).catch(err => {
+            console.log(err.response);
             setInputErrorMsg('Message cannot be sent');
             setMessageSending(false);
         }).then(res => {
@@ -56,14 +60,14 @@ const MessageInput = ({ conversation }) => {
         else {
             setNewMessage(ev.target.value);
         }
-
-        useEffect(() => {
-            if (inputValue.current) {
-                inputValue.current.style.height = "auto";
-                inputValue.current.style.height = `${inputValue.current.scrollHeight + 1}px`;
-            }
-        }, [newMessage]);
     }
+
+    useEffect(() => {
+        if (inputValue.current) {
+            inputValue.current.style.height = "auto";
+            inputValue.current.style.height = `${inputValue.current.scrollHeight + 1}px`;
+        }
+    }, [newMessage]);
 
     return (
         <>

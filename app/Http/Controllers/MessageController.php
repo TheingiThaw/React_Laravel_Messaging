@@ -92,7 +92,12 @@ class MessageController extends Controller
     }
 
     public function store(StoreMessageRequest $request) {
-        $data = $message->validated();
+        dd($request->all());
+        return response()->json(['validated_data' => $request->all()], 200);
+        $data = $request->validated();
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $files = $data['attachments'] ?? [];
         $data['sender_id'] = auth()->id();
         $receiver_id = $data['receiver_id'] ?? null;
@@ -120,7 +125,7 @@ class MessageController extends Controller
         }
 
         if($receiver_id){
-            Conversation::updateConversationWithMessage($receiverId, $senderId,$message);
+            Conversation::updateConversationWithMessage($receiverId, $data['sender_id'],$message);
         }
         else{
             Group::updateGroupWithMessage($groupId, $message);

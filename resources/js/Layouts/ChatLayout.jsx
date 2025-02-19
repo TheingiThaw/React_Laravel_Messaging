@@ -10,7 +10,8 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     const { on } = useEventBus();
 
     const [localMessage, setLocalMessage] = useState(messages);
-    const [loadMore, setLoadMore] = useState(false);
+    const loadMoreMessage = useRef(null);
+    const [loadMore, setLoadMore] = useState(true);
     const [scrollBottom, setScrollBottom] = useState();
 
     const createMessage = (message) => {
@@ -26,11 +27,9 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
     }
 
-    const loadMoreMessage = useRef();
-
     const loadMoreMessages = useCallback(() => {
         const firstMessage = localMessage[0];
-        axios.get(route('chat.loadOlder'), firstMessage.id)
+        axios.get(route('chat.loadOlder'), firstMessage)
             .catch(err => console.error(err))
             .then(({ data }) => {
                 console.log(data);
@@ -60,13 +59,26 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         const offCreated = on('message.created', createMessage);
 
         setScrollBottom(0);
-        setLoadMore(false);
+        setLoadMore(true);
 
         return () => {
             offCreated();
         }
 
     }, [messages, selectedConversation]);
+
+    useEffect(() => {
+        if (messageContainerRef.current && scrollBottom != null) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight -
+                messageContainerRef.current.offsetHeight -
+                scrollBottom;
+        }
+
+        if (!loadMore) {
+            return;
+        }
+
+    }, [localMessage]);
 
     return (
         <>
