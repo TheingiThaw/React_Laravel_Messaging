@@ -26,15 +26,9 @@ function AuthenticatedLayout({ header, children }) {
 
         Echo.private(channel)
             .listen('SocketMessage', (e) => {
-                console.log("Received event:", e); // Debug the e
+                console.log("Received event:", e); // Debug the event
 
-                if (!e || !e.content) {
-                    console.error("Error: Content is missing in the e", e);
-                    return;
-                }
-
-                // Safe to access content
-                console.log(e.content);
+                //start here
                 const message = e.message;
 
                 emit('message.created', message);

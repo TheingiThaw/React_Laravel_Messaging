@@ -7,7 +7,7 @@ const Home = ({ children, messages = null, selectedConversation = null }) => {
     const [localMessage, setLocalMessage] = useState([]);
 
     useEffect(() => {
-        setLocalMessage(messages ? messages.data.reverse() : []);
+        setLocalMessage(messages ? [...messages].reverse() : []);
     }, [messages, selectedConversation]);
 
     return (

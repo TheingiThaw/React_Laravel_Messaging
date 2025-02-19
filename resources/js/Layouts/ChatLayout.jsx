@@ -2,7 +2,7 @@ import { usePage } from "@inertiajs/react";
 import Message from "../App/Message"
 import MessageInput from "../App/MessageInput"
 import ChatHeader from "@/App/ChatHeader";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventBus } from "@/EventBus";
 
 const ChatLayout = ({ messages, selectedConversation }) => {
@@ -10,9 +10,46 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     const { on } = useEventBus();
 
     const [localMessage, setLocalMessage] = useState(messages);
+    const [loadMore, setLoadMore] = useState(false);
+    const [scrollBottom, setScrollBottom] = useState();
+
     const createMessage = (message) => {
-        setLocalMessage((prevMessage) => [...prevMessage, message]);
+        if (selectedConversation
+            && selectedConversation.is_group
+            && selectedConversation.id == message.group_id) {
+            setLocalMessage((prevMessage) => [...prevMessage, message]);
+        }
+        if (selectedConversation
+            && selectedConversation.is_user
+            && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
+            setLocalMessage((prevMessage) => [...prevMessage, message]);
+        }
     }
+
+    const loadMoreMessage = useRef();
+
+    const loadMoreMessages = useCallback(() => {
+        const firstMessage = localMessage[0];
+        axios.get(route('chat.loadOlder'), firstMessage.id)
+            .catch(err => console.error(err))
+            .then(({ data }) => {
+                console.log(data);
+                if (data.data.length == 0) {
+                    setLoadMore(false);
+                    return;
+                }
+
+                const scrollTop = messageContainerRef.current.scrollTop;
+                const scrollHeight = messageContainerRef.current.scrollHeight;
+                const clientHeight = messageContainerRef.current.clientHeight;
+                const scroll_bottom = scrollHeight - clientHeight - scrollTop;
+                setScrollBottom(scroll_bottom);
+
+                setLocalMessage((prevMsg) => {
+                    return [...data.data.reverse(), prevMsg];
+                })
+            });
+    }, [localMessage]);
 
     useEffect(() => {
         setLocalMessage(messages);
@@ -21,6 +58,9 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
 
         const offCreated = on('message.created', createMessage);
+
+        setScrollBottom(0);
+        setLoadMore(false);
 
         return () => {
             offCreated();
@@ -52,6 +92,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                 <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col">
                     <ChatHeader selectedConversation={selectedConversation} />
                     <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+                        <div ref={loadMoreMessage}></div>
                         {localMessage.map((message) => (
                             <Message key={message.id} message={message} selectedConversation={selectedConversation} />
                         ))}

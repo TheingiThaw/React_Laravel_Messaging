@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\MessageResource;
+use App\Http\Requests\StoreMessageRequest;
 
 class MessageController extends Controller
 {

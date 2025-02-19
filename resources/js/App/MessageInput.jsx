@@ -22,6 +22,8 @@ const MessageInput = ({ conversation }) => {
         }
 
         const formData = new FormData();
+
+        console.log(formData);
         formData.append('message', newMessage);
         if (conversation.is_user) {
             formData.append('receiver_id', conversation.id);
