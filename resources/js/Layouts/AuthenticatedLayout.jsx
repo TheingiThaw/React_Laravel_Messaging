@@ -43,6 +43,10 @@ function AuthenticatedLayout({ header, children }) {
                         `Shared ${message.attachments.length === 1 ? ' an attachment' : message.attachments.length + ' attachments'}`
                 });
 
+                return () => {
+                    channel.stopListening('SocketMessage');
+                };
+
             })
     });
 

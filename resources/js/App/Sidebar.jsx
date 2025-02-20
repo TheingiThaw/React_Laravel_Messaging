@@ -4,6 +4,7 @@ import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react';
 import TextInput from '@/Components/TextInput';
 import Echo from "../echo";
+import { useEventBus } from '@/EventBus';
 
 const Sidebar = () => {
 
@@ -12,6 +13,7 @@ const Sidebar = () => {
     const selectedConversation = page.props.selectedConversation;
     const [sortedConversation, setSortedConversation] = useState([]);
     const [localConversation, setLocalConversation] = useState([]);
+    const { on } = useEventBus();
 
     const [onlineUsers, setOnlineUsers] = useState([]);
 
@@ -51,8 +53,57 @@ const Sidebar = () => {
         setLocalConversation(filteredConversations);
     };
 
+    console.log('local', localConversation);
+
+
+    const messageCreate = (message) => {
+        console.log('localConversation before update:', localConversation); // Debugging
+
+        setLocalConversation(prevConversations => {
+            if (!prevConversations || prevConversations.length === 0) {
+                console.log('cannot loop'); // Logs when array is empty
+                return [];
+            }
+
+            return prevConversations.map(prevConversation => {
+                if (message &&
+                    message.group_id &&
+                    prevConversation.group_id
+                ) {
+                    return {
+                        ...prevConversation,
+                        last_message_id: message.id,
+                        last_massage_date: message.created_at
+                    };
+                }
+
+                if (message &&
+                    message.receiver_id &&
+                    prevConversation.is_user &&
+                    (message.sender_id === prevConversation.id || message.receiver_id === prevConversation.id)
+                ) {
+                    return {
+                        ...prevConversation,
+                        last_message_id: message.id,
+                        last_massage_date: message.created_at
+                    };
+                }
+                return prevConversation;
+            })
+        })
+    }
+
     useEffect(() => {
-        if (page.props.auth.conversations) {
+        const offCreated = on('message.created', messageCreate);
+
+        return () => {
+            offCreated();
+        };
+    }, []);
+
+    useEffect(() => {
+        console.log("page.props.auth.conversations:", page.props.auth.conversations);
+        if (Array.isArray(page.props.auth.conversations)) {
             setLocalConversation(page.props.auth.conversations);
         }
     }, [page.props.auth.conversations]);

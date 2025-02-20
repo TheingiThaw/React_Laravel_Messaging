@@ -1,6 +1,8 @@
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { FaceSmileIcon, HandThumbUpIcon, LinkIcon, MicrophoneIcon, PaperAirplaneIcon, PhotoIcon } from "@heroicons/react/16/solid"
 import { usePage } from "@inertiajs/react";
 import axios from "axios";
+import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 
 
@@ -40,7 +42,14 @@ const MessageInput = ({ conversation }) => {
         axios.post(route('chat.store'), formData, {
             onUploadProgress: (ProgressEvent) => {
                 return Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100);
+            },
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
+            // headers: {
+            //     'Content-Type': 'multipart/form-data',
+            //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            // }
         }).catch(err => {
             console.log(err.response);
             setInputErrorMsg('Message cannot be sent');
@@ -60,6 +69,41 @@ const MessageInput = ({ conversation }) => {
         else {
             setNewMessage(ev.target.value);
         }
+    }
+
+    const sendLike = () => {
+        if (messageSending) {
+            return;
+        }
+
+        setMessageSending(true);
+
+        const message = {
+            'message': '👍'
+        };
+        message['sender_id'] = authUser.id;
+
+        if (conversation.is_user) {
+            message['receiver_id'] = conversation.id;
+        }
+        else if (conversation.is_group) {
+            message['group_id'] = conversation.id;
+        }
+
+        console.log("Sending Payload:", message);
+
+        axios.post(route('chat.store'), message, {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }).catch(error => {
+            console.error("Error:", error.response?.data || error.message);
+        })
+            .then(() => {
+                console.log("Response:", response.data);
+                setMessageSending(false);
+            });
+
     }
 
     useEffect(() => {
@@ -109,8 +153,23 @@ const MessageInput = ({ conversation }) => {
                 </div>
                 <div className="flex items-center justify-center p-2 ">
                     <div className="grid grid-cols-2 gap-5 ">
-                        <button><FaceSmileIcon className="h-6 w-6" /></button>
-                        <button><HandThumbUpIcon className="h-6 w-6" /></button>
+                        <button className="">
+                            <Popover className="relative">
+                                <PopoverButton className="flex items-center">
+                                    <FaceSmileIcon className="h-6 w-6" />
+                                </PopoverButton>
+                                <PopoverPanel className="absolute left-100 right-0 bottom-0 top-200 z-20">
+                                    <EmojiPicker
+                                        onEmojiClick={(emojiObject) =>
+                                            setNewMessage((prevMsg) => prevMsg + emojiObject.emoji)
+                                        }
+                                        theme="dark"
+                                    />
+                                </PopoverPanel>
+                            </Popover>
+                        </button>
+
+                        <button onClick={sendLike} className=" relative"><HandThumbUpIcon className="h-6 w-6 " /></button>
                     </div>
                 </div>
                 {inputErrorMsg && <p className="text-red-500 text-xs">{inputErrorMsg}</p>}

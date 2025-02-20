@@ -5,6 +5,7 @@ namespace App\Events;
 use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Resources\MessageResource;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -27,7 +28,8 @@ class SocketMessage implements ShouldBroadcastNow
     public function broadcastWith(): array
     {
         return [
-            'message' => new MessageResource($this->message),
+            // 'message' => new MessageResource($this->message),
+            'message' => $this->message
         ];
     }
 

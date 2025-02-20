@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Message;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
+use App\Events\SocketMessage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\MessageResource;
@@ -71,33 +74,38 @@ class MessageController extends Controller
     }
 
     public function loadOlder(Message $message){
-        if($message->group_id){
-            $messages = Message::where('created_at', '<', $message->created_at)
-                        ->where('group_id', $message->group_id)
-                    ->latest()
-                    ->paginate(10);
-        } else{
-            $messages = Message::where('created_at', '<', $message->created_at)
-                        ->where(function ($query) use ($message) {
-                            $query->where('sender_id', $message->sender_id)
-                            ->where('receiver_id', $message->receiver_id)
-                            ->orWhere('sender_id', $message->receiver_id)
-                            ->where('receiver_id', $message->sender_id);
-                        })
-                        ->latest()
-                        ->paginate(10);
+        try {
+            Log::info("input", ['input' => $message ]);
+    
+            if ($message->group_id) {
+                $messages = Message::where('created_at', '<', $message->created_at)
+                                    ->where('group_id', $message->group_id)
+                                    ->latest()
+                                    ->paginate(10);
+            } else {
+                $messages = Message::where('created_at', '<', $message->created_at)
+                                    ->where(function ($query) use ($message) {
+                                        $query->where('sender_id', $message->sender_id)
+                                              ->where('receiver_id', $message->receiver_id)
+                                              ->orWhere('sender_id', $message->receiver_id)
+                                              ->where('receiver_id', $message->sender_id);
+                                    })
+                                    ->latest()
+                                    ->paginate(10);
+            }
+    
+            Log::info("messages", ['messages'=> $messages]);
+            return $messages;
+        } catch (\Exception $e) {
+            Log::error("Error loading older messages: " . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
         }
-
-        return new MessageResource($messages);
     }
 
     public function store(StoreMessageRequest $request) {
-        dd($request->all());
-        return response()->json(['validated_data' => $request->all()], 200);
+        try{
+
         $data = $request->validated();
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
         $files = $data['attachments'] ?? [];
         $data['sender_id'] = auth()->id();
         $receiver_id = $data['receiver_id'] ?? null;
@@ -125,14 +133,20 @@ class MessageController extends Controller
         }
 
         if($receiver_id){
-            Conversation::updateConversationWithMessage($receiverId, $data['sender_id'],$message);
+            Conversation::updateConversationWithMessage($receiver_id, $data['sender_id'],$message);
         }
         else{
             Group::updateGroupWithMessage($groupId, $message);
         }
 
         SocketMessage::dispatch($message);
-        return new MessageResource($message);
+        return $message;
+        }
+
+        catch (Exception $e) {
+            \Log::error('Error in store method: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
     public function destroy(Message $message){

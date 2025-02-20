@@ -18,18 +18,29 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         if (selectedConversation
             && selectedConversation.is_group
             && selectedConversation.id == message.group_id) {
-            setLocalMessage((prevMessage) => [...prevMessage, message]);
+            setLocalMessage((prevMessage) => {
+                if (!prevMessage.some((msg) => msg.id === message.id)) {
+                    return [...prevMessage, message];
+                }
+                return prevMessage;
+            });
         }
         if (selectedConversation
             && selectedConversation.is_user
             && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
-            setLocalMessage((prevMessage) => [...prevMessage, message]);
+            setLocalMessage((prevMessage) => {
+                if (!prevMessage.some((msg) => msg.id === message.id)) {
+                    return [...prevMessage, message];
+                }
+                return prevMessage;
+            });
         }
     }
 
     const loadMoreMessages = useCallback(() => {
         const firstMessage = localMessage[0];
-        axios.get(route('chat.loadOlder'), firstMessage)
+        console.log(firstMessage);
+        axios.get(route('chat.loadOlder', firstMessage.id))
             .catch(err => console.error(err))
             .then(({ data }) => {
                 console.log(data);
@@ -76,6 +87,21 @@ const ChatLayout = ({ messages, selectedConversation }) => {
 
         if (!loadMore) {
             return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => entry.isIntersecting && loadMoreMessages());
+            },
+            {
+                rootMargin: "0px 0px 200px 0px",
+            }
+        );
+
+        if (loadMoreMessage.current) {
+            setTimeout(() => {
+                observer.observe(loadMoreMessage.current);
+            }, 300);
         }
 
     }, [localMessage]);

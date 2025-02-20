@@ -88,7 +88,7 @@ class User extends Authenticatable
             'is_group' => false,
             'is_blocked' => $this->blocked_at !== null,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date
+            'last_message_date' => $this->last_message_date ? $this->last_message_date . ' UTC' : null,
         ];
     }
 }

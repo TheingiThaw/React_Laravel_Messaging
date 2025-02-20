@@ -13,7 +13,8 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // return true;
+        return auth()->check();
     }
 
     public function failedValidation(Validator $validator) {
@@ -30,7 +31,7 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required',
+            'message' => 'required|string',
             'sender_id' => 'required|exists:users,id',
             'receiver_id' => 'required_without:group_id|exists:users,id',
             'group_id' => 'required_without:receiver_id|exists:groups,id',

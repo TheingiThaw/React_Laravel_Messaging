@@ -17,6 +17,8 @@ window.Echo = new Echo({
             Accept: "application/json",
         },
     },
+    host: `${import.meta.env.VITE_REVERB_SCHEME}://${import.meta.env.VITE_REVERB_HOST}:${import.meta.env.VITE_REVERB_PORT}`,
+//     host: `${process.env.MIX_REVERB_SCHEME}://${process.env.MIX_REVERB_HOST}:${process.env.MIX_REVERB_PORT}`
 });
 
 export default window.Echo;
