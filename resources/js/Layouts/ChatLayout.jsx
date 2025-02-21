@@ -4,6 +4,7 @@ import MessageInput from "../App/MessageInput"
 import ChatHeader from "@/App/ChatHeader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventBus } from "@/EventBus";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/20/solid";
 
 const ChatLayout = ({ messages, selectedConversation }) => {
     const messageContainerRef = useRef();
@@ -107,19 +108,20 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     }, [localMessage]);
 
     return (
-        <>
+        <div className="flex-1 w-full flex flex-col overflow-hidden">
             {!selectedConversation ? (
-                <div className="bg-slate-100 rounded-md mx-auto flex h-[89vh] flex-col opacity-35 items-center justify-center text-center">
+                <div className="bg-slate-100 rounded-md mx-auto flex h-full flex-col opacity-35 items-center justify-center text-center">
                     <div className="text-2xl md:text-4xl p-16 text-black/90">
                         Please Select a Conversation to See Messages
                     </div>
+                    <ChatBubbleLeftRightIcon className="w-20 h-20 inline-block" />
                 </div>
             ) : localMessage === undefined ? (
                 <div className="flex justify-center items-center text-center h-full">
                     <div className="text-lg text-black/90">Loading messages...</div>
                 </div>
             ) : localMessage.length === 0 ? (
-                <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col">
+                <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col ">
                     <ChatHeader selectedConversation={selectedConversation} />
                     <div className="flex justify-center items-center text-center h-full">
                         <div className="text-lg text-black/90">No Messages Found</div>
@@ -163,7 +165,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                 <MessageInput conversation={selectedConversation} />
             </div>} */}
 
-        </>
+        </div>
     )
 }
 

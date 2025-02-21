@@ -110,10 +110,13 @@ const Sidebar = () => {
 
     return (
         <>
-            <div className='w-96 h-[91vh] flex flex-col bg-white'>
-                <div className=' w-9/12 mx-auto text-base-content flex justify-between'>
+            <div className=' h-[91vh] w-full flex-1 overflow-hidden flex flex-col bg-white'>
+                <div className={`transition-all w-full sm:w-[220px] md:w-[300px] flex flex-col overflow-hidden ${selectedConversation ? '-ml-[100%]' : ''}`}></div>
+                <div className=' w-9/12 mx-auto text-base-content mt-5 flex justify-between'>
                     <h1 className='text-2xl font-bold'>Chat</h1>
-                    <EllipsisVerticalIcon className='h-5 w-5' />
+                    <button>
+                        <EllipsisVerticalIcon className='h-5 w-5' />
+                    </button>
                 </div>
 
                 <div className="w-9/12 my-5 mx-auto">
@@ -121,7 +124,7 @@ const Sidebar = () => {
                         onKeyUp={onSearch} type='text' placeholder='Search' className='w-full' />
                 </div>
 
-                <div className='overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200'>
+                <div className={`overflow-y-scroll flex-1 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200`}>
                     {sortedConversation && sortedConversation.map((conversation, index) => (
                         <Conversation
                             key={conversation.is_group ? `group_${conversation.id}` : `user_${conversation.id}`}

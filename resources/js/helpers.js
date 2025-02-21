@@ -64,3 +64,30 @@ export const formatDateShort = (date) => {
         return date.toLocaleDateString();
     }
 }
+
+export const isImage = (attachment) => {
+    const mime = attachment.mime || attachment.type;
+    mime = mime.split('/');
+    return mime[0].toLowerCase() === 'image';
+}
+
+export const isVideo = (attachment) => {
+    const mime = attachment.mime || attachment.type;
+    mime = mime.split('/');
+    return mime[0].toLowerCase() === 'video';
+}
+
+export const isAudio = (attachment) => {
+    const mime = attachment.mime || attachment.type;
+    mime = mime.split('/');
+    return mime[0].toLowerCase() === 'audio';
+}
+
+export const isPDF = (attachment) => {
+    const mime = attachment.mime || attachment.type;
+    return mime.toLowerCase() === 'application/pdf';
+}
+
+export const isPreviewable = (attachment) => {
+    return isAudio(attachment) || isImage(attachment) || isVideo(attachment) || isPDF(attachment);
+}

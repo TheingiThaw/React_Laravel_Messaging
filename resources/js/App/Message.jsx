@@ -2,7 +2,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/16/solid";
 import { usePage } from "@inertiajs/react";
 import UserAvatar from "./UserAvatar";
 import GroupAvatar from "./GroupAvatar";
-import { formatDateLong } from "@/helpers";
+import { formatDateLong, formatDateShort } from "@/helpers";
 
 const Message = ({ message, selectedConversation }) => {
     const page = usePage();
@@ -30,8 +30,7 @@ const Message = ({ message, selectedConversation }) => {
                         <div className="chat-bubble bg-blue-500 text-white">{message.message}</div>
                     </div>
                 )}
-                {message.sender_id !== currentUser.id && <div className="chat-footer opacity-50">Delivered</div>}
-                {message.sender_id === currentUser.id && <div className="chat-footer opacity-50">Seen at 12:46</div>}
+                {message.sender_id === currentUser.id && <div className="chat-footer opacity-50">Seen at {formatDateShort(new Date(message.created_at))}</div>}
             </div>
         </div>
     )

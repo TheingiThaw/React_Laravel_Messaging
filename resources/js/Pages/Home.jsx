@@ -11,9 +11,9 @@ const Home = ({ children, messages = null, selectedConversation = null }) => {
     }, [messages, selectedConversation]);
 
     return (
-        <div className="grid grid-cols-3">
+        <div className=" sm:flex md:grid md:grid-cols-3">
             <Sidebar />
-            <div className="col-span-2">
+            <div className=" md:col-span-2 ">
                 <ChatLayout messages={localMessage} selectedConversation={selectedConversation} />
             </div>
         </div>
