@@ -5,7 +5,9 @@ import { usePage } from "@inertiajs/react";
 import axios from "axios";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
-import Markdown from 'react-markdown'
+import AttachmentPreview from "./AttachmentPreview";
+import CustomAudioPlayer from "./CustomAudioPlayer";
+
 
 
 const MessageInput = ({ conversation }) => {
@@ -35,7 +37,7 @@ const MessageInput = ({ conversation }) => {
         formData.append('message', newMessage);
         formData.append('sender_id', authUser.id);
         chosenFile.forEach((file) => {
-            formData.append('attachments[]', file.file.name);
+            formData.append('attachments[]', file.file);
         })
         if (conversation.is_user) {
             formData.append('receiver_id', conversation.id);
@@ -71,7 +73,7 @@ const MessageInput = ({ conversation }) => {
     }
 
     const onChangeEvent = (ev) => {
-        if (ev.key == 'enter' && !ev.shiftKey) {
+        if (ev.key == 'Enter' && !ev.shiftKey) {
             onSendClick();
         }
         else {
@@ -116,18 +118,21 @@ const MessageInput = ({ conversation }) => {
 
     const onFileChange = (ev) => {
         const files = ev.target.files;
+        console.log('files', files);
 
-        const standardFiles = [...files].map(file => {
-            return {
-                file: file.file,
-                url: URL.createObjectURL(file.url)
-            };
-        })
+        const standardFiles = Array.from(files).map(file => ({
+            file: file,
+            url: URL.createObjectURL(file)
+        }));
+
+        console.log(standardFiles);
 
         setChosenFile((prevFile) => {
-            return [...prevFile, standardFiles];
-        })
+            return [...prevFile, ...standardFiles];
+        });
     }
+
+    console.log('chosen File', chosenFile);
 
     useEffect(() => {
         if (inputValue.current) {
@@ -158,46 +163,14 @@ const MessageInput = ({ conversation }) => {
                                 accept="image/*"
                                 className="absolute left-0 right-0 top-0 bottom-0 w-full h-full opacity-0 z-20 cursor-pointer" />
                         </button>
-                        {!!uploadProgress && <progress className="progress progress-primary w-56" value={progress} max="100"></progress>}
-
-
-                        {chosenFile ? chosenFile.map(file => {
-                            <div className={`flex justify-between gap-1` +
-                                (!isImage(file.file) ? 'w-[240px]' : '')
-                            }>
-                                isImage(file.file) ?
-                                <img src={file.file.url} className="w-16 h-16 object-cover" alt="" />
-                                : (isAudio(file.file) ?
-                                <CustomAudioPlayer file={file} showVolume={false} />
-                                :
-                                (isVideo(file) ?
-                                <CustomVideoPlayer file={file} />
-                                :
-                                <div className="w-16 h-16">
-
-                                    <button onClick={() => {
-                                        setChosenFile(chosenFile.filter(f => {
-                                            return f.file.name != file.file.name
-                                        }))
-                                    }} className="absolute w-6 h-6 rounded-full -right-2 -top-2 hover:text-gray-100 z-10" >
-                                        <XCircleIcon className="w-6" />
-                                    </button>
-
-                                </div>)
-                                )
-
-                            </div>
-                        }) : ''}
-
-
                     </div>
                 </div>
                 {/* Left icon sie */}
-                {inputErrorMsg && <p className="text-red-500 text-xs">{inputErrorMsg}</p>}
+
 
                 <div className="col-span-4 ">
                     <div className=" relative mx-auto">
-                        {/* <Markdown> */}
+
                         <textarea
                             type="text"
                             placeholder="Type a message"
@@ -207,7 +180,7 @@ const MessageInput = ({ conversation }) => {
                             ref={inputValue}
                             value={newMessage}
                         />
-                        {/* </Markdown> */}
+
                         <button onClick={onSendClick} className="py-1 px-3 bg-green-500 absolute right-2 top-1/2 transform -translate-y-1/2 text-white rounded-md">
                             {messageSending
                                 ? <span className="loading loading-spinner loading-xs"></span>
@@ -215,7 +188,34 @@ const MessageInput = ({ conversation }) => {
 
                         </button>
                     </div>
+
+                    {inputErrorMsg && <p className="text-red-500 text-xs">{inputErrorMsg}</p>}
+                    {!!uploadProgress && <progress className="progress progress-primary w-56" value={uploadProgress} max="100"></progress>}
+                    {chosenFile.length > 0 && chosenFile.map((file, index) => (
+                        <div key={index} className={`flex relative justify-between gap-1 ${!isImage(file.file) ? 'w-[240px]' : ''}`}>
+                            <div className="relative">
+                                {isImage(file.file) ? (
+                                    <img src={file.url} className="w-16 h-16 object-cover" alt="Preview" />
+                                ) : isAudio(file.file) ? (
+                                    <CustomAudioPlayer file={file.file} showVolume={false} />
+                                ) : (
+                                    <AttachmentPreview attachments={file.file} />
+                                )}
+                                <button
+                                    onClick={() => setChosenFile(chosenFile.filter((_, i) => i !== index))}
+                                    className="absolute w-6 h-6 rounded-full -right-2 -top-2 bg-black/30 hover:text-gray-100 z-10"
+                                >
+                                    <XCircleIcon className="w-6" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+
                 </div>
+
+
+
                 <div className="flex items-center justify-center p-2 ">
                     <div className="grid grid-cols-2 gap-5 ">
                         <button className="">

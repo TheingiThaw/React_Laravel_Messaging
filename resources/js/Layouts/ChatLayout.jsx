@@ -5,6 +5,8 @@ import ChatHeader from "@/App/ChatHeader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventBus } from "@/EventBus";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/20/solid";
+import MessageAttachments from "@/App/MessageAttachments";
+import AttachmentMessagePreview from "@/App/AttachmentMessagePreview";
 
 const ChatLayout = ({ messages, selectedConversation }) => {
     const messageContainerRef = useRef();
@@ -14,6 +16,13 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     const loadMoreMessage = useRef(null);
     const [loadMore, setLoadMore] = useState(true);
     const [scrollBottom, setScrollBottom] = useState();
+    const [previewAttachment, setPreviewAttachment] = useState({});
+    const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
+
+    const attachmentClick = (attachments, index) => {
+        setPreviewAttachment({ attachments, index });
+        setShowAttachmentPreview(true);
+    };
 
     const createMessage = (message) => {
         if (selectedConversation
@@ -108,64 +117,44 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     }, [localMessage]);
 
     return (
-        <div className="flex-1 w-full flex flex-col overflow-hidden">
+        <div className="flex-1 w-full flex flex-col items-center justify-center h-full overflow-hidden">
             {!selectedConversation ? (
-                <div className="bg-slate-100 rounded-md mx-auto flex h-full flex-col opacity-35 items-center justify-center text-center">
+                <div className=" bg-slate-500 rounded-md mx-auto flex h-full flex-col opacity-35 items-center justify-center text-center">
                     <div className="text-2xl md:text-4xl p-16 text-black/90">
                         Please Select a Conversation to See Messages
                     </div>
                     <ChatBubbleLeftRightIcon className="w-20 h-20 inline-block" />
                 </div>
-            ) : localMessage === undefined ? (
-                <div className="flex justify-center items-center text-center h-full">
-                    <div className="text-lg text-black/90">Loading messages...</div>
-                </div>
-            ) : localMessage.length === 0 ? (
-                <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col ">
-                    <ChatHeader selectedConversation={selectedConversation} />
-                    <div className="flex justify-center items-center text-center h-full">
-                        <div className="text-lg text-black/90">No Messages Found</div>
-                    </div>
-                    <MessageInput conversation={selectedConversation} />
-                </div>
             ) : (
                 <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col">
                     <ChatHeader selectedConversation={selectedConversation} />
-                    <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-                        <div ref={loadMoreMessage}></div>
-                        {localMessage.map((message) => (
-                            <Message key={message.id} message={message} selectedConversation={selectedConversation} />
-                        ))}
-                    </div>
+                    {localMessage === undefined ? (
+                        <div className="flex justify-center items-center text-center h-full">
+                            <div className="text-lg text-black/90">Loading messages...</div>
+                        </div>
+                    ) : localMessage.length === 0 ? (
+                        <div className="flex justify-center items-center text-center h-full">
+                            <div className="text-lg text-black/90">No Messages Found</div>
+                        </div>
+                    ) : (
+                        <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+                            <div ref={loadMoreMessage}></div>
+                            {localMessage.map((message) => (
+                                <Message key={message.id} message={message} selectedConversation={selectedConversation} />
+                            ))}
+                        </div>
+                    )}
                     <MessageInput conversation={selectedConversation} />
+                    {previewAttachment.attachments && (
+                        <AttachmentMessagePreview attachments={previewAttachment.attachments} index={previewAttachment.index}
+                            show={showAttachmentPreview}
+                            close={() => { setShowAttachmentPreview(false) }}
+                        />
+                    )}
                 </div>
             )}
-            {/* {messages != [] && <div className="bg-slate-100 rounded-md mx-auto h-[89vh] flex flex-col">
-                <ChatHeader selectedConversation={selectedConversation} />
-
-                {messages.length === 0 && (
-                    <div className="flex justify-center items-center text-center h-full">
-                        <div className="text-lg text-black/90">
-                            No Messages Found
-                        </div>
-
-                    </div>
-                )}
-
-                {messages.length > 0 && (
-                    <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-                        {messages.map((message) => (
-                            <Message key={message.id} message={message} selectedConversation={selectedConversation} />
-                        ))}
-
-                    </div>
-                )}
-
-
-                <MessageInput conversation={selectedConversation} />
-            </div>} */}
-
         </div>
+
     )
 }
 

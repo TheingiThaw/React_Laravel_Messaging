@@ -66,28 +66,47 @@ export const formatDateShort = (date) => {
 }
 
 export const isImage = (attachment) => {
-    const mime = attachment.mime || attachment.type;
+    console.log('helpers', attachment);
+    let mime = attachment.mime || attachment.type;
+    if (!mime) return false;
     mime = mime.split('/');
     return mime[0].toLowerCase() === 'image';
 }
 
 export const isVideo = (attachment) => {
-    const mime = attachment.mime || attachment.type;
+    let mime = attachment.mime || attachment.type;
     mime = mime.split('/');
     return mime[0].toLowerCase() === 'video';
 }
 
 export const isAudio = (attachment) => {
-    const mime = attachment.mime || attachment.type;
+    let mime = attachment.mime || attachment.type;
     mime = mime.split('/');
     return mime[0].toLowerCase() === 'audio';
 }
 
 export const isPDF = (attachment) => {
-    const mime = attachment.mime || attachment.type;
+    let mime = attachment.mime || attachment.type;
     return mime.toLowerCase() === 'application/pdf';
 }
 
 export const isPreviewable = (attachment) => {
     return isAudio(attachment) || isImage(attachment) || isVideo(attachment) || isPDF(attachment);
+}
+
+export const formatBytes = (bytes, decimal = 2) => {
+    if(bytes == 0) return "0 bytes";
+
+    const x = 1024;
+    let size = bytes;
+    decimal = decimal <= 0 ? 0 : decimal;
+    const sizes = ['bytes', 'KB', 'MB', 'GB'];
+
+    let i = 0;
+    while(size >= x){
+        size /= x;
+        i++
+    };
+
+    return parseFloat(size.toFixed(decimal)) + " " + sizes[i];
 }
