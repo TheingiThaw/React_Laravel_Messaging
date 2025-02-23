@@ -1,13 +1,14 @@
 import React from 'react'
 
 const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } }) => {
+    console.log(attachments);
     return (
         <>
             <Button
                 onClick={open}
                 className="rounded-md bg-black/20 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-black/30 data-[focus]:outline-1 data-[focus]:outline-white"
             >
-                Open dialog
+                {attachments}
             </Button>
 
             <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={close}>

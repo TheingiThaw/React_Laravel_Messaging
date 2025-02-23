@@ -119,7 +119,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     return (
         <div className="flex-1 w-full flex flex-col items-center justify-center h-full overflow-hidden">
             {!selectedConversation ? (
-                <div className=" bg-slate-500 rounded-md mx-auto flex h-full flex-col opacity-35 items-center justify-center text-center">
+                <div className=" bg-slate-300 rounded-md mx-auto flex h-full flex-col opacity-35 items-center justify-center text-center">
                     <div className="text-2xl md:text-4xl p-16 text-black/90">
                         Please Select a Conversation to See Messages
                     </div>

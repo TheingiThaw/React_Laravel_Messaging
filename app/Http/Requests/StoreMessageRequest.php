@@ -18,6 +18,7 @@ class StoreMessageRequest extends FormRequest
     }
 
     public function failedValidation(Validator $validator) {
+        \Log::error('Validation Errors:', $validator->errors()->all());
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors()
         ], 422));
@@ -31,7 +32,7 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string',
+            'message' => 'required_without:attachments|string|nullable',
             'sender_id' => 'required|exists:users,id',
             'receiver_id' => 'required_without:group_id|exists:users,id',
             'group_id' => 'required_without:receiver_id|exists:groups,id',

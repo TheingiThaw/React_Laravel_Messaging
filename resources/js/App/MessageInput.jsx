@@ -21,7 +21,7 @@ const MessageInput = ({ conversation }) => {
     const inputValue = useRef();
 
     const onSendClick = () => {
-        if (newMessage.trim() === '') {
+        if (newMessage.trim() === '' && chosenFile.length === 0) {
             setInputErrorMsg('Message is required');
 
             setTimeout(() => {
@@ -32,9 +32,10 @@ const MessageInput = ({ conversation }) => {
         }
 
         const formData = new FormData();
-
-        console.log(formData);
-        formData.append('message', newMessage);
+        // if (newMessage && newMessage.trim() !== '') {
+        //     formData.append('message', newMessage);
+        // }
+        formData.append('message', newMessage.trim() !== '' ? newMessage.trim() : '');
         formData.append('sender_id', authUser.id);
         chosenFile.forEach((file) => {
             formData.append('attachments[]', file.file);
@@ -47,6 +48,8 @@ const MessageInput = ({ conversation }) => {
         }
 
         setMessageSending(true);
+        console.log('formdata', formData);
+        console.log('chosen File in function', chosenFile);
 
         axios.post(route('chat.store'), formData, {
             onUploadProgress: (ProgressEvent) => {
@@ -191,25 +194,28 @@ const MessageInput = ({ conversation }) => {
 
                     {inputErrorMsg && <p className="text-red-500 text-xs">{inputErrorMsg}</p>}
                     {!!uploadProgress && <progress className="progress progress-primary w-56" value={uploadProgress} max="100"></progress>}
-                    {chosenFile.length > 0 && chosenFile.map((file, index) => (
-                        <div key={index} className={`flex relative justify-between gap-1 ${!isImage(file.file) ? 'w-[240px]' : ''}`}>
-                            <div className="relative">
-                                {isImage(file.file) ? (
-                                    <img src={file.url} className="w-16 h-16 object-cover" alt="Preview" />
-                                ) : isAudio(file.file) ? (
-                                    <CustomAudioPlayer file={file.file} showVolume={false} />
-                                ) : (
-                                    <AttachmentPreview attachments={file.file} />
-                                )}
-                                <button
-                                    onClick={() => setChosenFile(chosenFile.filter((_, i) => i !== index))}
-                                    className="absolute w-6 h-6 rounded-full -right-2 -top-2 bg-black/30 hover:text-gray-100 z-10"
-                                >
-                                    <XCircleIcon className="w-6" />
-                                </button>
+                    <div className="flex flex-wrap gap-2">
+                        {chosenFile.length > 0 && chosenFile.map((file, index) => (
+                            <div key={index} className={`flex relative justify-between gap-1 ${!isImage(file.file) ? 'w-[240px]' : ''}`}>
+                                <div className="relative flex">
+                                    {isImage(file.file) ? (
+                                        <img src={file.url} className="w-16 h-16 object-cover" alt="Preview" />
+                                    ) : isAudio(file.file) ? (
+                                        <CustomAudioPlayer file={file.file} showVolume={false} />
+                                    ) : (
+                                        <AttachmentPreview file={file.file} />
+                                    )}
+                                    <button
+                                        onClick={() => setChosenFile(chosenFile.filter((_, i) => i !== index))}
+                                        className="absolute w-6 h-6 rounded-full -right-2 -top-2 bg-black/30 hover:text-gray-100 z-10"
+                                    >
+                                        <XCircleIcon className="w-6" />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+
 
 
                 </div>

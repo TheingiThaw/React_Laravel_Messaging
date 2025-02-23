@@ -4,21 +4,21 @@ import React from 'react'
 
 const AttachmentPreview = ({ file }) => {
 
-    console.log(attachments);
+    console.log('preview', file);
 
     return (
         <>
-            <div className="w-24 h-24 rounded-md px-2 py-3 bg-black/30">
+            <div className="w-240 h-18 rounded-md px-2 py-3 bg-gray">
                 <div className="grid grid-cols-3">
-                    {isPDF(file.file) && <img src='../../../public/image/pdf.png' className='w-8 '></img>}
-                    {!isPreviewable && (
-                        <div className='rounded-md flex items-center justify-center w-10 h-10'>
-                            <PaperClipIcon className='text-white' />
+                    {isPDF(file) && <img src='../../../public/image/pdf.png' className='w-6'></img>}
+                    {!isPreviewable(file) && (
+                        <div className='rounded-md flex bg-black/20 items-center justify-center w-16 h-12'>
+                            <PaperClipIcon className='text-white w-6 h-6' />
                         </div>
                     )}
                     <div className="col-span-2 flex flex-col">
-                        <p className='text-ellipsis text-nowrap'>{attachments.name}</p>
-                        <small>{formatBytes(attachments.size)}</small>
+                        <p className='text-ellipsis text-nowrap overflow-hidden'>{file.name}</p>
+                        <small>{formatBytes(file.size)}</small>
                     </div>
 
                 </div>

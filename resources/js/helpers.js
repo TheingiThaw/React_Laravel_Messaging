@@ -66,7 +66,6 @@ export const formatDateShort = (date) => {
 }
 
 export const isImage = (attachment) => {
-    console.log('helpers', attachment);
     let mime = attachment.mime || attachment.type;
     if (!mime) return false;
     mime = mime.split('/');
@@ -75,19 +74,22 @@ export const isImage = (attachment) => {
 
 export const isVideo = (attachment) => {
     let mime = attachment.mime || attachment.type;
+    if (!mime) return false;
     mime = mime.split('/');
     return mime[0].toLowerCase() === 'video';
 }
 
 export const isAudio = (attachment) => {
     let mime = attachment.mime || attachment.type;
+    if (!mime) return false;
     mime = mime.split('/');
     return mime[0].toLowerCase() === 'audio';
 }
 
-export const isPDF = (attachment) => {
-    let mime = attachment.mime || attachment.type;
-    return mime.toLowerCase() === 'application/pdf';
+export const isPDF = (file) => {
+    console.log('pdf', file);
+    let type = file.type;
+    return type.toLowerCase() === 'application/pdf';
 }
 
 export const isPreviewable = (attachment) => {
