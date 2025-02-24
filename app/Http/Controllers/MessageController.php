@@ -36,8 +36,10 @@ class MessageController extends Controller
                 $query->where('sender_id', $user->id)
                       ->where('receiver_id', auth()->id());
             })
+            ->with('attachments')
             ->latest()
             ->paginate(10);
+
 
         if (!$messages || $messages->isEmpty()) {
             Log::warning('No messages found for user:', ['user_id' => $user->id]);
@@ -57,14 +59,13 @@ class MessageController extends Controller
             return response()->json(['error' => 'No messages found'], 404);
         }
 
+        Log::info('user_message', ['user_message', $messages]);
         return inertia('Home', [
             'selectedConversation' => $user->toConversationArray(),
             'messages' => $messages->items(),
         ]);
 
     }
-
-
 
     public function byGroup(Group $group){
         $messages = Message::where('group_id', $group->id)

@@ -215,12 +215,7 @@ const MessageInput = ({ conversation }) => {
                             </div>
                         ))}
                     </div>
-
-
-
                 </div>
-
-
 
                 <div className="flex items-center justify-center p-2 ">
                     <div className="grid grid-cols-2 gap-5 ">

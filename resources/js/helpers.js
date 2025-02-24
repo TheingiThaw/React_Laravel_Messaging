@@ -87,9 +87,8 @@ export const isAudio = (attachment) => {
 }
 
 export const isPDF = (file) => {
-    console.log('pdf', file);
     let type = file.type;
-    return type.toLowerCase() === 'application/pdf';
+    return type === 'application/pdf';
 }
 
 export const isPreviewable = (attachment) => {

@@ -19,6 +19,8 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     const [previewAttachment, setPreviewAttachment] = useState({});
     const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
 
+    console.log('local message', localMessage);
+
     const attachmentClick = (attachments, index) => {
         setPreviewAttachment({ attachments, index });
         setShowAttachmentPreview(true);
@@ -140,7 +142,10 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                         <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
                             <div ref={loadMoreMessage}></div>
                             {localMessage.map((message) => (
-                                <Message key={message.id} message={message} selectedConversation={selectedConversation} />
+                                <>
+                                    <Message key={message.id} message={message} selectedConversation={selectedConversation} onAttachmentClick={attachmentClick} />
+
+                                </>
                             ))}
                         </div>
                     )}
