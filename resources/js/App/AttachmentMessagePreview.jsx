@@ -19,8 +19,10 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                             transition
                             className="w-screen h-screen max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
                         >
-                            <div className='w-full h-full'>
+                            <div className='w-full h-full p-3'>
+                                <button>
 
+                                </button>
                             </div>
                         </DialogPanel>
                     </div>

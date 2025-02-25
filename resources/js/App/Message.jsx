@@ -20,8 +20,10 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
                     <time className="text-xs opacity-50">{formatDateLong(new Date(message.created_at))}</time>
                 </div>
                 <div className="flex items-center">
-                    <div className={`chat-bubble text-black ${message.sender_id === currentUser.id ? 'bg-blue-300' : 'bg-gray-200'}`}>{message.message}</div>
-                    <MessageAttachments attachments={message.attachments} attachmentClick={onAttachmentClick} />
+                    <div className={`chat-bubble text-black ${message.sender_id === currentUser.id ? 'bg-blue-300' : 'bg-gray-200'}`}>{message.message}
+                        <MessageAttachments attachments={message.attachments} attachmentClick={onAttachmentClick} />
+                    </div>
+
                 </div>
 
                 {/* {message.sender_id !== currentUser.id && (

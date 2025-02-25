@@ -7,8 +7,8 @@ const MessageAttachments = ({ attachments, attachmentClick }) => {
 
     return (
         <>
-            {attachments.length > 0 && (
-                <div className="mt-3 flex flex-wrap justify-end gap-2">
+            {attachments && attachments.length > 0 && (
+                <div className="mt-3 flex flex-wrap justify-end gap-2 bg-black/10 relative rounded-md">
                     {attachments.map((attachment, index) => (
                         <div
                             onClick={() => attachmentClick(attachment, index)}
@@ -18,15 +18,16 @@ const MessageAttachments = ({ attachments, attachmentClick }) => {
                             <a
                                 href={attachment.url}
                                 download
-                                className="absolute top-2 right-2 bg-black/15 hover:bg-black/50 hover:text-white z-10"
+                                className="absolute right-2 rounded-md hover:bg-black/50 hover:text-white z-10"
+                                style={{ maxWidth: '100%' }}
                             >
-                                <ArrowDownTrayIcon className="h-6 w-6" />
+                                <ArrowDownTrayIcon className="h-5 w-5" />
                             </a>
                             {isImage(attachment) && (
                                 <img
-                                    src={attachment.url}
+                                    src={`/storage/${attachment.path}`}
                                     alt={attachment.name}
-                                    className="w-10 h-15 rounded-md"
+                                    className=" w-24 h-24 rounded-md"
                                 />
                             )}
                             {isAudio(attachment) && (
@@ -42,12 +43,18 @@ const MessageAttachments = ({ attachments, attachmentClick }) => {
                                 ></iframe>
                             )}
                             {!isPreviewable(attachment) && (
-                                <div className="absolute top-2 right-2 z-10">
-                                    <a href={attachment.url} download>
-                                        <PaperClipIcon className="h-6 w-6" />
-                                    </a>
-                                    <small className="text-center">{attachment.name}</small>
-                                </div>
+                                <>
+                                    <div className="absolute top-2 right-2 z-10">
+                                    </div>
+                                    <div className='flex flex-col items-center w-full'>
+                                        <a href={attachment.url} download className='relative flex items-center justify-center'>
+                                            <PaperClipIcon className="h-12 w-12" />
+                                        </a>
+                                        <p className="text-xs text-center text-ellipsis">
+                                            {attachment.name}
+                                        </p>
+                                    </div>
+                                </>
                             )}
                         </div>
                     ))}
