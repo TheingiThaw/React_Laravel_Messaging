@@ -61,7 +61,7 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
                             <h2 className='text-ellipsis overflow-hidden font-semibold text-nowrap'>{conversation.name}</h2>
                             <p className=' text-xs text-nowrap mt-1 text-gray-500'>{formatDateShort(new Date(conversation.last_message_date))}</p>
                         </div>
-                        <p className='text-nowrap overflow-hidden text-ellipsis '>{conversation.last_message ? conversation.last_message : ''}</p>
+                        <p className={`text-nowrap overflow-hidden text-ellipsis ${!conversation.last_message && 'italic'}`}>{conversation.last_message ? conversation.last_message : 'Shared Attachments'}</p>
                     </div>
 
                     {currentUser.is_admin && conversation.is_user ? (

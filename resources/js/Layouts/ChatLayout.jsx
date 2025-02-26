@@ -26,6 +26,8 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         setShowAttachmentPreview(true);
     };
 
+    console.log('preview_attachment', previewAttachment);
+
     const createMessage = (message) => {
         if (selectedConversation
             && selectedConversation.is_group
@@ -144,14 +146,14 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                             {localMessage.map((message) => (
                                 <>
                                     <Message key={message.id} message={message} selectedConversation={selectedConversation} onAttachmentClick={attachmentClick} />
-
                                 </>
                             ))}
                         </div>
                     )}
                     <MessageInput conversation={selectedConversation} />
                     {previewAttachment.attachments && (
-                        <AttachmentMessagePreview attachments={previewAttachment.attachments} index={previewAttachment.index}
+                        <AttachmentMessagePreview attachments={Array.isArray(previewAttachment.attachments) ? previewAttachment.attachments : [previewAttachment.attachments]}
+                            index={previewAttachment.index}
                             show={showAttachmentPreview}
                             close={() => { setShowAttachmentPreview(false) }}
                         />

@@ -108,7 +108,7 @@ class MessageController extends Controller
     }
 
     public function store(StoreMessageRequest $request) {
-        \Log::info($request->all());
+        // \Log::info($request->all());
         try {
             $data = $request->validated();
             $files = $data['attachments'] ?? [];
@@ -142,6 +142,7 @@ class MessageController extends Controller
                 Group::updateGroupWithMessage($groupId, $message);
             }
 
+            // \Log::info('message', ['message' => $message]);
             SocketMessage::dispatch($message);
             return $message;
         } catch (Throwable $e) {
