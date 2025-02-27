@@ -5,38 +5,37 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } }) => {
     console.log('attachments', attachments);
+    console.log('AttachmentMessagePreview rendered');
 
     const [currentIndex, setCurrentIndex] = useState(index);
 
     const attachment = useMemo(() => {
-        return attachments[currentIndex];
+        return Array.isArray(attachments) ? attachments[currentIndex] : undefined;
     }, [attachments, currentIndex]);
 
     console.log('attachment', attachment);
-    console.log('index', index);
+    console.log('currentIndex', currentIndex);
 
     const previewableAttachments = useMemo(() => {
-        return attachments.filter((attachment) => isPreviewable(attachment));
+        return Array.isArray(attachments) ? attachments.filter((attachment) => isPreviewable(attachment)) : [];
     }, [attachments]);
 
     const next = () => {
-        if (currentIndex == previewableAttachments.length - 1) {
-            return;
+        if (currentIndex < previewableAttachments.length - 1) {
+            setCurrentIndex(currentIndex + 1);
         }
-
-        setCurrentIndex(currentIndex + 1);
     }
 
     const onClose = () => {
+        console.log('onClose function called');
         close();
+        console.log('close function executed');
     }
 
     const prev = () => {
-        if (currentIndex === 0) {
-            return;
+        if (currentIndex > 0) {
+            setCurrentIndex(currentIndex - 1);
         }
-
-        setCurrentIndex(currentIndex - 1);
     }
 
     useEffect(() => {
@@ -59,15 +58,16 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                             className="w-screen h-screen max-w-md rounded-xl bg-white/5 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
                         >
                             <div className='w-full h-full relative overflow-hidden'>
-                                <button onClick={onClose} className='absolute top-2 right-0 cursor-pointer'>
-                                    <XCircleIcon className='w-5 h-5 ' />
+                                <button onClick={() => { e.stopPropagation(); console.log('Button Clicked'); }} className='absolute top-2 right-0 hover:bg-black/50 cursor-pointer'>
+                                    <XCircleIcon className='w-8 h-8 ' />
                                 </button>
 
+
                                 <div className="relative h-full w-full">
-                                    {currentIndex > 1 && (
+                                    {currentIndex > 0 && (
                                         <button
                                             onClick={prev}
-                                            className='absolute rounded hover:bg-black/5 top-1/2 -translate-y-1/2 flex items-center justify-center '
+                                            className='absolute rounded bg-black/5 left-1 hover:bg-black/10 hover:text-white top-1/2 -translate-y-1/2 flex items-center justify-center '
                                         >
                                             <ChevronLeftIcon className='w-10' />
                                         </button>
@@ -75,7 +75,7 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                                     {currentIndex < previewableAttachments.length - 1 && (
                                         <button
                                             onClick={next}
-                                            className='absolute rounded  hover:bg-black/5  top-1/2 -translate-y-1/2 flex items-center justify-center '
+                                            className='absolute rounded right-1 bg-black/5  hover:bg-black/10 hover:text-white  top-1/2 -translate-y-1/2 flex items-center justify-center '
                                         >
                                             <ChevronRightIcon className='w-10' />
                                         </button>
@@ -108,10 +108,10 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                                             )}
 
                                             {!isPreviewable(attachment) && (
-                                                <div className='flex items-center justify-center flex-col text-gray-100'>
-                                                    <PaperClipIcon className='w-10 h-10 mb-3' />
+                                                <div className='flex items-center bg-black/5 p-32 rounded justify-center flex-col'>
+                                                    <PaperClipIcon className='w-24 h-24 mb-3' />
                                                     <small className='text-center '>{attachment.name}</small>
-                                                    <small className='text-xs'>{formatBytes(attachment.size)}</small>
+                                                    <small className='text-xs '>{formatBytes(attachment.size)}</small>
                                                 </div>
                                             )}
 
@@ -121,8 +121,8 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                             </div>
                         </DialogPanel>
                     </div>
-                </div>
-            </Dialog>
+                </div >
+            </Dialog >
         </>
     )
 }

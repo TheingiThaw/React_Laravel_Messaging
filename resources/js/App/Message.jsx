@@ -9,6 +9,8 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
     const page = usePage();
     const currentUser = page.props.auth.user;
 
+    console.log('message-attachments', message.attachments);
+
     return (
         <div className="p-3">
             <div className={`chat ${message.sender_id === currentUser.id ? 'chat-end' : 'chat-start'}`}>
@@ -22,25 +24,13 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
                 <div className="flex items-center">
                     <div className={`chat-bubble text-black ${message.sender_id === currentUser.id ? 'bg-blue-300' : 'bg-gray-200'}`}>
                         {message.message}
-                        <MessageAttachments attachments={message.attachments} attachmentClick={onAttachmentClick} />
+                        <MessageAttachments
+                            attachments={message.attachments}
+                            attachmentClick={(attachment, index) => onAttachmentClick(message.attachments, index)}
+                        />
                     </div>
 
                 </div>
-
-                {/* {message.sender_id !== currentUser.id && (
-                    <div className="flex items-center justify-start">
-
-                        <EllipsisVerticalIcon className="w-4 h-4 text-gray-500 ml-3" />
-                    </div>
-                )}
-                {message.sender_id === currentUser.id && (
-                    <div className="flex items-center justify-end">
-                        <EllipsisVerticalIcon className="w-4 h-4 text-gray-500" />
-                        <div className="chat-bubble bg-blue-500 text-white">{message.message}</div>
-                        <MessageAttachments attachments={message.attachments} attachmentClick={onAttachmentClick} />
-                    </div>
-                )}
-                {message.sender_id === currentUser.id && <div className="chat-footer opacity-50">Seen at {formatDateShort(new Date(message.created_at))}</div>} */}
 
             </div>
         </div>

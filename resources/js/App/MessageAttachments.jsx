@@ -3,7 +3,6 @@ import { ArrowDownTrayIcon, PaperClipIcon, PlayCircleIcon } from '@heroicons/rea
 import React from 'react';
 
 const MessageAttachments = ({ attachments, attachmentClick }) => {
-    console.log('messageAttachments', attachments);
 
     return (
         <>

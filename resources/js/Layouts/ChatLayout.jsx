@@ -19,14 +19,23 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     const [previewAttachment, setPreviewAttachment] = useState({});
     const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
 
-    console.log('local message', localMessage);
-
     const attachmentClick = (attachments, index) => {
-        setPreviewAttachment({ attachments, index });
+        console.log("Clicked Attachments:", attachments);
+        console.log("Index:", index);
+
+        setPreviewAttachment({
+            attachments: attachments,  // Check if this is a full array or a single item
+            index: index
+        });
         setShowAttachmentPreview(true);
     };
 
-    console.log('preview_attachment', previewAttachment);
+    console.log('localMessage', localMessage);
+
+
+    useEffect(() => {
+        console.log('Preview Attachment:', previewAttachment); // Check the state when it updates
+    }, [previewAttachment]);
 
     const createMessage = (message) => {
         if (selectedConversation
@@ -144,18 +153,25 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                         <div ref={messageContainerRef} className="flex-grow overflow-y-auto px-3 py-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
                             <div ref={loadMoreMessage}></div>
                             {localMessage.map((message) => (
-                                <>
-                                    <Message key={message.id} message={message} selectedConversation={selectedConversation} onAttachmentClick={attachmentClick} />
-                                </>
+                                <Message
+                                    key={message.id}
+                                    message={message}
+                                    selectedConversation={selectedConversation}
+                                    onAttachmentClick={(attachments, index) => attachmentClick(attachments, index)}
+                                />
                             ))}
                         </div>
                     )}
                     <MessageInput conversation={selectedConversation} />
                     {previewAttachment.attachments && (
-                        <AttachmentMessagePreview attachments={Array.isArray(previewAttachment.attachments) ? previewAttachment.attachments : [previewAttachment.attachments]}
+                        <AttachmentMessagePreview
+                            attachments={Array.isArray(previewAttachment.attachments) ? previewAttachment.attachments : [previewAttachment.attachments]}
                             index={previewAttachment.index}
                             show={showAttachmentPreview}
-                            close={() => { setShowAttachmentPreview(false) }}
+                            close={() => {
+                                console.log('close function called in parent');
+                                setShowAttachmentPreview(false)
+                            }}
                         />
                     )}
                 </div>
