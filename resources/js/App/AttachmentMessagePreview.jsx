@@ -67,7 +67,7 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                                     {currentIndex > 0 && (
                                         <button
                                             onClick={prev}
-                                            className='absolute rounded bg-black/5 left-1 hover:bg-black/10 hover:text-white top-1/2 -translate-y-1/2 flex items-center justify-center '
+                                            className='absolute rounded bg-black/10 text-white hover:bg-black/20  top-1/2 -translate-y-1/2 flex items-center justify-center '
                                         >
                                             <ChevronLeftIcon className='w-10' />
                                         </button>
@@ -75,7 +75,7 @@ const AttachmentMessagePreview = ({ attachments, index, show, close = () => { } 
                                     {currentIndex < previewableAttachments.length - 1 && (
                                         <button
                                             onClick={next}
-                                            className='absolute rounded right-1 bg-black/5  hover:bg-black/10 hover:text-white  top-1/2 -translate-y-1/2 flex items-center justify-center '
+                                            className='absolute rounded right-1 bg-black/10 text-white hover:bg-black/20 top-1/2 -translate-y-1/2 flex items-center justify-center '
                                         >
                                             <ChevronRightIcon className='w-10' />
                                         </button>
