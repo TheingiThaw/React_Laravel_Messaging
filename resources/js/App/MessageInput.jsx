@@ -7,6 +7,7 @@ import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import AttachmentPreview from "./AttachmentPreview";
 import CustomAudioPlayer from "./CustomAudioPlayer";
+import AudioRecorder from "./AudioRecorder";
 
 
 
@@ -135,6 +136,10 @@ const MessageInput = ({ conversation }) => {
         });
     }
 
+    const audioFile = (file, url) => {
+        setChosenFile((oldFiles) => [...oldFiles, { file, url }]);
+    }
+
     console.log('chosen File', chosenFile);
 
     useEffect(() => {
@@ -157,7 +162,7 @@ const MessageInput = ({ conversation }) => {
                                 onChange={onFileChange}
                                 className="absolute left-0 right-0 top-0 bottom-0 w-full h-full opacity-0 z-20 cursor-pointer" />
                         </button>
-                        <button><MicrophoneIcon className="h-6 w-6" /></button>
+                        <AudioRecorder addFile={audioFile} />
                         <button className="relative">
                             <PhotoIcon className="h-6 w-6" />
                             <input type="file"

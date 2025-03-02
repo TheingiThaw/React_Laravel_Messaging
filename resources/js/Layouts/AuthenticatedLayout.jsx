@@ -5,6 +5,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { Dropdown } from 'flowbite-react';
 import { useState } from 'react';
 import { useEventBus } from '@/EventBus';
+import Toast from '@/App/Toast';
+import NewMessageNotification from '@/App/NewMessageNotification';
 
 function AuthenticatedLayout({ header, children }) {
     const page = usePage();
@@ -131,6 +133,8 @@ function AuthenticatedLayout({ header, children }) {
 
                 <main>{children}</main>
             </div>
+            <Toast />
+            <NewMessageNotification />
         </>
     );
 }
