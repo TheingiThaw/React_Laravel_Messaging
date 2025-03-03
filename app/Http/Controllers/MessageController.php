@@ -142,6 +142,8 @@ class MessageController extends Controller
                 Group::updateGroupWithMessage($groupId, $message);
             }
 
+            $message->load('sender');
+
             // \Log::info('message', ['message' => $message]);
             SocketMessage::dispatch($message);
             return $message;

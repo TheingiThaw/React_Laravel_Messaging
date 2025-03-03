@@ -29,7 +29,7 @@ class SocketMessage implements ShouldBroadcastNow
     {
         return [
             // 'message' => new MessageResource($this->message),
-            'message' => $this->message
+            'message' => $this->message->load('sender')
         ];
     }
 

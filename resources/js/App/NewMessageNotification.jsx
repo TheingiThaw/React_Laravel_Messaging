@@ -15,6 +15,8 @@ const Toast = () => {
 
             setToasts((oldToasts) => [...oldToasts, { message, uuid, user, group_id }]);
 
+            console.log(user, message, group_id);
+
             setTimeout(() => {
                 setToasts(oldToasts => oldToasts.filter(toast => toast.uuid !== uuid));
             }, 5000);
@@ -24,12 +26,12 @@ const Toast = () => {
     return (
         <div className="toast toast-top toast-center">
             {toasts.map((toast) => (
-                <div key={toast.uuid} className="alert alert-success">
+                <div key={toast.uuid} className="alert bg-blue-100">
                     <Link
-                        href={toast.group_id ? route('chat.group', toast.group_id) : route('chat.user', toast.user.id)}
+                        href={toast.group_id ? route('chat.group', toast.group_id) : route('chat.user', toast.user)}
                     >
                         {toast.group_id ? <GroupAvatar /> : <UserAvatar conversation={toast.user} />}
-                        <span>{toast.message}</span>
+                        <span className='ps-5'>{toast.message}</span>
                     </Link>
 
                 </div>
