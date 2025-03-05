@@ -4,6 +4,7 @@ import UserAvatar from "./UserAvatar";
 import GroupAvatar from "./GroupAvatar";
 import { formatDateLong, formatDateShort } from "@/helpers";
 import MessageAttachments from "./MessageAttachments";
+import MessageDropdownOptions from "./MessageDropdownOptions";
 
 const Message = ({ message, selectedConversation, onAttachmentClick }) => {
     const page = usePage();
@@ -22,6 +23,7 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
                     <time className="text-xs opacity-50">{formatDateLong(new Date(message.created_at))}</time>
                 </div>
                 <div className="flex items-center">
+                    {message.sender_id === currentUser.id ? <MessageDropdownOptions message={message.id} /> : ''}
                     <div className={`chat-bubble text-black ${message.sender_id === currentUser.id ? 'bg-blue-300' : 'bg-gray-200'}`}>
                         {message.message}
                         <MessageAttachments

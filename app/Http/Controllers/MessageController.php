@@ -159,9 +159,25 @@ class MessageController extends Controller
             return response()->json(['message' => 'Cannot Delete', 403]);
         }
 
+        $group = null;
+        $conversation = null;
+
+        if($message->group_id){
+            $group = Group::where('last_message_id', $message->id)->first();
+        }
+        else{
+            $conversation = Conversation::where('last_message_id', $message->id)->first();
+        }
+
         $message->delete();
 
-        return response('', 204);
+        if($group){
+            $lastMessage = $group->lastMessage();
+        }else if($conversation){
+            $lastMessage = $conversation->lastMessage();
+        }
+
+        return response('last message', $lastMessage);
     }
 }
 

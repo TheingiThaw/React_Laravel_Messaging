@@ -60,6 +60,23 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
     }
 
+    const deleteMessage = (message) => {
+        if (selectedConversation
+            && selectedConversation.is_group
+            && selectedConversation.id == message.group_id) {
+            setLocalMessage((prevMessage) => {
+                return prevMessage.filter((msg) => msg.id !== message.id);
+            });
+        }
+        if (selectedConversation
+            && selectedConversation.is_user
+            && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
+            setLocalMessage((prevMessage) => {
+                return prevMessage.filter((msg) => msg.id !== message.id);
+            });
+        }
+    }
+
     const loadMoreMessages = useCallback(() => {
         const firstMessage = localMessage[0];
         console.log(firstMessage);
@@ -91,12 +108,14 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
 
         const offCreated = on('message.created', createMessage);
+        const offDeleted = on('message.deleted', deleteMessage);
 
         setScrollBottom(0);
         setLoadMore(true);
 
         return () => {
             offCreated();
+            offDeleted();
         }
 
     }, [messages, selectedConversation]);

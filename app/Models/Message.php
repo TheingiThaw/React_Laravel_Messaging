@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Models\MessageAttachment;
+use App\Observers\MessageObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+#[ObservedBy([MessageObserver::class])]
 
 class Message extends Model
 {

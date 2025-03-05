@@ -93,11 +93,17 @@ const Sidebar = () => {
         })
     }
 
+    const messageDelete = (message) => {
+
+    }
+
     useEffect(() => {
         const offCreated = on('message.created', messageCreate);
+        const offDeleted = on('message.deleted', messageDelete);
 
         return () => {
             offCreated();
+            offDeleted();
         };
     }, []);
 
