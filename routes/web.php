@@ -13,7 +13,7 @@ Route::middleware('auth')->group(function (){
     Route::get('chat/user/{user}', [MessageController::class,'byUser'])->name('chat.user');
     Route::get('chat/older/{message}', [MessageController::class, 'loadOlder'])->name('chat.loadOlder');
     Route::post('message/store', [MessageController::class, 'store'])->name('chat.store');
-    Route::delete('message/delete/{id}',[MessageController::class, 'delete'])->name('chat.delete');
+    Route::delete('message/delete/{id}',[MessageController::class, 'destroy'])->name('chat.delete');
 });
 
 Route::middleware('auth')->group(function () {

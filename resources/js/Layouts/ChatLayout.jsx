@@ -60,7 +60,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
     }
 
-    const deleteMessage = (message) => {
+    const deleteMessage = ({ message }) => {
         if (selectedConversation
             && selectedConversation.is_group
             && selectedConversation.id == message.group_id) {

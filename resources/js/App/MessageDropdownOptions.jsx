@@ -5,14 +5,13 @@ import axios from 'axios';
 
 const MessageDropdownOptions = ({ message }) => {
 
-    console.log('message', message);
-
     const deleteMessage = () => {
-        console.log('delete message');
+        console.log('message', message);
 
-        axios.post(route('chat.delete'), message)
+        axios.delete(route('chat.delete', { id: message }))
             .then((res) => {
-                console.log(res.data)
+                console.log(res.data);
+                emit('message.deleted', { message, prevMessage: res.data });
             })
             .catch((err) => console.error(err));
     }

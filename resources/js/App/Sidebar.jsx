@@ -68,7 +68,8 @@ const Sidebar = () => {
             return prevConversations.map(prevConversation => {
                 if (message &&
                     message.group_id &&
-                    prevConversation.group_id
+                    prevConversation.group_id &&
+                    message.group_id === prevConversation.group_id
                 ) {
                     return {
                         ...prevConversation,
@@ -93,8 +94,40 @@ const Sidebar = () => {
         })
     }
 
-    const messageDelete = (message) => {
+    const messageDelete = ({ prevMessage }) => {
+        setLocalConversation(prevConversations => {
+            if (!prevConversations || prevConversations.length === 0) {
+                console.log('cannot loop'); // Logs when array is empty
+                return [];
+            }
 
+            return prevConversations.map(prevConversation => {
+                if (prevMessage &&
+                    prevMessage.group_id &&
+                    prevConversation.group_id &&
+                    prevMessage.group_id === prevConversation.group_id
+                ) {
+                    return {
+                        ...prevConversation,
+                        last_message_id: prevMessage.id,
+                        last_massage_date: prevMessage.created_at
+                    };
+                }
+
+                if (prevMessage &&
+                    prevMessage.receiver_id &&
+                    prevConversation.is_user &&
+                    (prevMessage.sender_id === prevConversation.id || prevMessage.receiver_id === prevConversation.id)
+                ) {
+                    return {
+                        ...prevConversation,
+                        last_message_id: prevMessage.id,
+                        last_massage_date: prevMessage.created_at
+                    };
+                }
+                return prevConversation;
+            })
+        })
     }
 
     useEffect(() => {

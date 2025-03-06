@@ -154,7 +154,11 @@ class MessageController extends Controller
     }
 
 
-    public function destroy(Message $message){
+    public function destroy($id){
+
+        $message = Message::find($id);
+        // Log::info("message", ['message' => $message]);
+
         if($message->sender_id !== auth()->id()){
             return response()->json(['message' => 'Cannot Delete', 403]);
         }
@@ -172,12 +176,14 @@ class MessageController extends Controller
         $message->delete();
 
         if($group){
+            $group = Group::find('id', $group->id);
             $lastMessage = $group->lastMessage();
         }else if($conversation){
+            $conversation = Conversation::find('id', $conversation->id);
             $lastMessage = $conversation->lastMessage();
         }
 
-        return response('last message', $lastMessage);
+        return response()->json(['message' => $lastMessage ? $lastMessage : 'No message'], 200);
     }
 }
 
