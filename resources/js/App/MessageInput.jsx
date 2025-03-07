@@ -140,7 +140,7 @@ const MessageInput = ({ conversation }) => {
         setChosenFile((oldFiles) => [...oldFiles, { file, url }]);
     }
 
-    console.log('chosen File', chosenFile);
+    // console.log('chosen File', chosenFile);
 
     useEffect(() => {
         if (inputValue.current) {

@@ -56,6 +56,7 @@ class Conversation extends Model
                 'user_id2' => $userId2,
                 'last_message_id' => $message->id
             ]);
+            Log::info("create", ['create' => $userId1, $userId2, $message->id]);
         }
     }
 }

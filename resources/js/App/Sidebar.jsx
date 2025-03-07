@@ -95,6 +95,7 @@ const Sidebar = () => {
     }
 
     const messageDelete = ({ prevMessage }) => {
+        console.log('delete message', prevMessage);
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
                 console.log('cannot loop'); // Logs when array is empty

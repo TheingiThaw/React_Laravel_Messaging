@@ -2,8 +2,11 @@ import React from 'react'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/react/16/solid'
 import axios from 'axios';
+import { useEventBus } from '@/EventBus';
 
 const MessageDropdownOptions = ({ message }) => {
+
+    const { emit } = useEventBus();
 
     const deleteMessage = () => {
         console.log('message', message);

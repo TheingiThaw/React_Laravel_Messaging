@@ -157,7 +157,7 @@ class MessageController extends Controller
     public function destroy($id){
 
         $message = Message::find($id);
-        // Log::info("message", ['message' => $message]);
+        Log::info("message", ['message' => $message]);
 
         if($message->sender_id !== auth()->id()){
             return response()->json(['message' => 'Cannot Delete', 403]);
@@ -165,25 +165,43 @@ class MessageController extends Controller
 
         $group = null;
         $conversation = null;
+        $lastMessage = null;
 
         if($message->group_id){
             $group = Group::where('last_message_id', $message->id)->first();
+            Log::info("group", ['group' => $group]);
         }
         else{
             $conversation = Conversation::where('last_message_id', $message->id)->first();
+            Log::info("conversation", ['conversation' => $conversation]);
         }
 
         $message->delete();
 
-        if($group){
-            $group = Group::find('id', $group->id);
-            $lastMessage = $group->lastMessage();
-        }else if($conversation){
-            $conversation = Conversation::find('id', $conversation->id);
-            $lastMessage = $conversation->lastMessage();
+        if ($group) {
+            $lastMessage = Message::where('group_id', $group->id)->latest()->first();
+            if ($lastMessage) {
+                $group->update(['last_message_id' => $lastMessage->id]);
+            }
+            Log::info("last message", ['lastMessage' => $lastMessage]);
+
+        } elseif ($conversation) {
+            $lastMessage = Message::where(function ($query) use ($conversation) {
+                $query->where('sender_id', $conversation->user_id1)
+                      ->where('receiver_id', $conversation->user_id2)
+                      ->orWhere('sender_id', $conversation->user_id2)
+                      ->where('receiver_id', $conversation->user_id1);
+            })->latest()->first();
+
+            if ($lastMessage) {
+                $conversation->update(['last_message_id' => $lastMessage->id]);
+            }
+            Log::info("last message", ['lastMessage' => $lastMessage]);
         }
 
-        return response()->json(['message' => $lastMessage ? $lastMessage : 'No message'], 200);
+        return response()->json([
+            'message' => $lastMessage
+        ], 200);
     }
 }
 

@@ -10,7 +10,7 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
     const page = usePage();
     const currentUser = page.props.auth.user;
 
-    console.log('message-attachments', message.attachments);
+    // console.log('message-attachments', message.attachments);
 
     return (
         <div className="p-3">

@@ -61,6 +61,8 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     }
 
     const deleteMessage = ({ message }) => {
+        console.log('delete message', message);
+        console.log(selectedConversation);
         if (selectedConversation
             && selectedConversation.is_group
             && selectedConversation.id == message.group_id) {
@@ -71,10 +73,12 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         if (selectedConversation
             && selectedConversation.is_user
             && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
+            console.log('message deleted', message);
             setLocalMessage((prevMessage) => {
                 return prevMessage.filter((msg) => msg.id !== message.id);
             });
         }
+
     }
 
     const loadMoreMessages = useCallback(() => {
