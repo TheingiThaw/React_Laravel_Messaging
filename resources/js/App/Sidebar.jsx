@@ -56,8 +56,9 @@ const Sidebar = () => {
     console.log('local', localConversation);
 
 
-    const messageCreate = (message) => {
+    const messageCreate = ({ message }) => {
         console.log('localConversation before update:', localConversation); // Debugging
+        console.log('message:', message); // Debugging
 
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
@@ -94,7 +95,9 @@ const Sidebar = () => {
         })
     }
 
-    const messageDelete = ({ prevMessage }) => {
+    const messageDelete = ({ prevMessage, message }) => {
+        console.log('localConversation before update:', localConversation); // Debugging
+        console.log('message:', message); // Debugging
         console.log('delete message', prevMessage);
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
@@ -103,27 +106,28 @@ const Sidebar = () => {
             }
 
             return prevConversations.map(prevConversation => {
-                if (prevMessage &&
-                    prevMessage.group_id &&
+                if (prevMessage.last_message &&
+                    prevMessage.last_message.group_id &&
                     prevConversation.group_id &&
-                    prevMessage.group_id === prevConversation.group_id
+                    prevMessage.last_message.group_id === prevConversation.group_id
                 ) {
                     return {
                         ...prevConversation,
-                        last_message_id: prevMessage.id,
-                        last_massage_date: prevMessage.created_at
+                        last_message_id: prevMessage.last_message.id,
+                        last_massage_date: prevMessage.last_message.created_at
                     };
                 }
 
-                if (prevMessage &&
-                    prevMessage.receiver_id &&
+                if (prevMessage.last_message &&
+                    prevMessage.last_message.receiver_id &&
                     prevConversation.is_user &&
-                    (prevMessage.sender_id === prevConversation.id || prevMessage.receiver_id === prevConversation.id)
+                    (prevMessage.last_message.sender_id === prevConversation.id || prevMessage.last_message.receiver_id === prevConversation.id)
                 ) {
+                    console.log('message deleted', prevMessage.last_message);
                     return {
                         ...prevConversation,
-                        last_message_id: prevMessage.id,
-                        last_massage_date: prevMessage.created_at
+                        last_message_id: prevMessage.last_message.id,
+                        last_massage_date: prevMessage.last_message.created_at
                     };
                 }
                 return prevConversation;

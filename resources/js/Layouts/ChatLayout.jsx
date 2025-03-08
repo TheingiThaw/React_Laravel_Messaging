@@ -60,22 +60,25 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         }
     }
 
-    const deleteMessage = ({ message }) => {
-        console.log('delete message', message);
-        console.log(selectedConversation);
+    const deleteMessage = ({ prevMessage, message }) => {
+        // console.log('delete message', prevMessage);
+        // console.log(selectedConversation);
+        // console.log('Selected Conversation ID:', selectedConversation.id);
+        // console.log('Message Sender ID:', prevMessage.last_message?.sender_id);
+        // console.log('Message Receiver ID:', prevMessage.last_message?.receiver_id);
         if (selectedConversation
             && selectedConversation.is_group
-            && selectedConversation.id == message.group_id) {
-            setLocalMessage((prevMessage) => {
-                return prevMessage.filter((msg) => msg.id !== message.id);
+            && selectedConversation.id == prevMessage.group_id) {
+            setLocalMessage((prevMsg) => {
+                return prevMsg.filter((msg) => msg.id !== message);
             });
         }
         if (selectedConversation
             && selectedConversation.is_user
-            && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
-            console.log('message deleted', message);
-            setLocalMessage((prevMessage) => {
-                return prevMessage.filter((msg) => msg.id !== message.id);
+            && (selectedConversation.id == prevMessage.last_message?.sender_id || selectedConversation.id == prevMessage.last_message?.receiver_id)) {
+            // console.log('message deleted', prevMessage);
+            setLocalMessage((prevMsg) => {
+                return prevMsg.filter((msg) => msg.id !== message);
             });
         }
 

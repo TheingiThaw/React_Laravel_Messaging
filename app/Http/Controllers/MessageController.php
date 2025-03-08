@@ -144,8 +144,8 @@ class MessageController extends Controller
 
             $message->load('sender');
 
-            // \Log::info('message', ['message' => $message]);
-            SocketMessage::dispatch($message);
+            \Log::info('message', ['message' => $message]);
+            SocketMessage::dispatch(new MessageResource($message));
             return $message;
         } catch (Throwable $e) {
             \Log::error('Error in store method: ', ['exception' => $e]);
@@ -157,7 +157,7 @@ class MessageController extends Controller
     public function destroy($id){
 
         $message = Message::find($id);
-        Log::info("message", ['message' => $message]);
+        // Log::info("message", ['message' => $message]);
 
         if($message->sender_id !== auth()->id()){
             return response()->json(['message' => 'Cannot Delete', 403]);
@@ -188,9 +188,11 @@ class MessageController extends Controller
         } elseif ($conversation) {
             $lastMessage = Message::where(function ($query) use ($conversation) {
                 $query->where('sender_id', $conversation->user_id1)
-                      ->where('receiver_id', $conversation->user_id2)
-                      ->orWhere('sender_id', $conversation->user_id2)
-                      ->where('receiver_id', $conversation->user_id1);
+                    ->where('receiver_id', $conversation->user_id2)
+                    ->orWhere(function ($q) use ($conversation) {
+                        $q->where('sender_id', $conversation->user_id2)
+                            ->where('receiver_id', $conversation->user_id1);
+                    });
             })->latest()->first();
 
             if ($lastMessage) {
@@ -200,7 +202,7 @@ class MessageController extends Controller
         }
 
         return response()->json([
-            'message' => $lastMessage
+            'last_message' => $lastMessage ? new MessageResource($lastMessage) : null
         ], 200);
     }
 }

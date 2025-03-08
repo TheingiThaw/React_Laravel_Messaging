@@ -11,9 +11,14 @@ const MessageDropdownOptions = ({ message }) => {
     const deleteMessage = () => {
         console.log('message', message);
 
+        if (!message) {
+            console.error("Message or message ID is undefined!");
+            return;
+        }
+
         axios.delete(route('chat.delete', { id: message }))
             .then((res) => {
-                console.log(res.data);
+                console.log(res.data, message);
                 emit('message.deleted', { message, prevMessage: res.data });
             })
             .catch((err) => console.error(err));

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id1')->constrained('users');
             $table->foreignId('user_id2')->constrained('users');
-            $table->foreignId('last_message_id')->nullable()->constrained('messages')->onDelete('cascade');
+            $table->foreignId('last_message_id')->nullable()->constrained('messages')->onDelete('set null');
             $table->timestamps();
         });
     }
