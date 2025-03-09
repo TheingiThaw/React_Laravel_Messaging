@@ -53,12 +53,7 @@ const Sidebar = () => {
         setLocalConversation(filteredConversations);
     };
 
-    console.log('local', localConversation);
-
-
-    const messageCreate = ({ message }) => {
-        console.log('localConversation before update:', localConversation); // Debugging
-        console.log('message:', message); // Debugging
+    const messageCreate = (message) => {
 
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
@@ -70,24 +65,25 @@ const Sidebar = () => {
                 if (message &&
                     message.group_id &&
                     prevConversation.group_id &&
-                    message.group_id === prevConversation.group_id
+                    message.group_id == prevConversation.group_id
                 ) {
                     return {
                         ...prevConversation,
-                        last_message_id: message.id,
-                        last_massage_date: message.created_at
+                        last_message: message.message,
+                        last_message_date: message.created_at || prevConversation.last_message_date,
                     };
                 }
 
-                if (message &&
+                if (
+                    message &&
                     message.receiver_id &&
                     prevConversation.is_user &&
-                    (message.sender_id === prevConversation.id || message.receiver_id === prevConversation.id)
+                    (message.sender_id == prevConversation.id || message.receiver_id == prevConversation.id.toString())
                 ) {
                     return {
                         ...prevConversation,
-                        last_message_id: message.id,
-                        last_massage_date: message.created_at
+                        last_message: message.message,
+                        last_message_date: message.created_at,
                     };
                 }
                 return prevConversation;
@@ -96,9 +92,9 @@ const Sidebar = () => {
     }
 
     const messageDelete = ({ prevMessage, message }) => {
-        console.log('localConversation before update:', localConversation); // Debugging
-        console.log('message:', message); // Debugging
-        console.log('delete message', prevMessage);
+        // console.log('localConversation before update:', localConversation); // Debugging
+        // console.log('message:', message); // Debugging
+        // console.log('delete message', prevMessage);
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
                 console.log('cannot loop'); // Logs when array is empty
@@ -109,25 +105,25 @@ const Sidebar = () => {
                 if (prevMessage.last_message &&
                     prevMessage.last_message.group_id &&
                     prevConversation.group_id &&
-                    prevMessage.last_message.group_id === prevConversation.group_id
+                    prevMessage.last_message.group_id == prevConversation.group_id
                 ) {
                     return {
                         ...prevConversation,
-                        last_message_id: prevMessage.last_message.id,
-                        last_massage_date: prevMessage.last_message.created_at
+                        last_message: message.message,
+                        last_message_date: message.created_at || prevConversation.last_message_date,
                     };
                 }
 
                 if (prevMessage.last_message &&
                     prevMessage.last_message.receiver_id &&
                     prevConversation.is_user &&
-                    (prevMessage.last_message.sender_id === prevConversation.id || prevMessage.last_message.receiver_id === prevConversation.id)
+                    (prevMessage.last_message.sender_id == prevConversation.id || prevMessage.last_message.receiver_id == prevConversation.id)
                 ) {
-                    console.log('message deleted', prevMessage.last_message);
+                    // console.log('message deleted', prevMessage.last_message);
                     return {
                         ...prevConversation,
-                        last_message_id: prevMessage.last_message.id,
-                        last_massage_date: prevMessage.last_message.created_at
+                        last_message: message.message,
+                        last_message_date: message.created_at || prevConversation.last_message_date,
                     };
                 }
                 return prevConversation;
@@ -146,11 +142,12 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
-        console.log("page.props.auth.conversations:", page.props.auth.conversations);
+        // console.log("page.props.auth.conversations:", page.props.auth.conversations);
         if (Array.isArray(page.props.auth.conversations)) {
             setLocalConversation(page.props.auth.conversations);
         }
     }, [page.props.auth.conversations]);
+
 
     return (
         <>

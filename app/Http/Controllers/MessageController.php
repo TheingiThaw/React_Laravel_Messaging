@@ -59,7 +59,7 @@ class MessageController extends Controller
             return response()->json(['error' => 'No messages found'], 404);
         }
 
-        Log::info('user_message', ['user_message', $messages]);
+        // Log::info('user_message', ['user_message', $messages]);
         return inertia('Home', [
             'selectedConversation' => $user->toConversationArray(),
             'messages' => $messages->items(),
@@ -144,8 +144,8 @@ class MessageController extends Controller
 
             $message->load('sender');
 
-            \Log::info('message', ['message' => $message]);
-            SocketMessage::dispatch(new MessageResource($message));
+            // \Log::info('message', ['message' => $message]);
+            SocketMessage::dispatch($message);
             return $message;
         } catch (Throwable $e) {
             \Log::error('Error in store method: ', ['exception' => $e]);

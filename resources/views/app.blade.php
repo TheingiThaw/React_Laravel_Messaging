@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if (session('token'))
+        <meta name="auth-token" content="{{ session('token') }}">
+    @endif
+
+
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -21,6 +26,18 @@
 
 <body class="font-sans antialiased">
     @inertia
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tokenMeta = document.querySelector('meta[name="auth-token"]');
+            if (tokenMeta) {
+                const token = tokenMeta.getAttribute('content');
+                console.log('Setting token:', token); // Debugging
+                localStorage.setItem('token', token);
+            }
+        });
+    </script>
+
 </body>
 
 </html>

@@ -17,8 +17,17 @@ export default function Login({ status, canResetPassword }) {
         e.preventDefault();
 
         post(route('login'), {
+            onSuccess: (page) => {
+                const token = page.props.token; // Get token from server response
+                console.log('Received Token:', token);
+
+                if (token) {
+                    localStorage.setItem('token', token);
+                }
+            },
             onFinish: () => reset('password'),
         });
+
     };
 
     return (

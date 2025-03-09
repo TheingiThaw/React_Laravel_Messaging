@@ -16,7 +16,9 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
         <div className="p-3">
             <div className={`chat ${message.sender_id === currentUser.id ? 'chat-end' : 'chat-start'}`}>
                 <div className="chat-image avatar">
-                    {message.receiver_id ? <UserAvatar conversation={selectedConversation} /> : <GroupAvatar conversation={selectedConversation} />}
+                    {message.receiver_id && message.sender_id != currentUser.id ? <UserAvatar conversation={selectedConversation} /> : (
+                        message.group_id ? <GroupAvatar conversation={selectedConversation} /> : null
+                    )}
                 </div>
                 <div className="chat-header">
                     {message.sender_id === currentUser.id ? '' : selectedConversation.name}

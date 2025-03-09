@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Broadcast;
 // Broadcast::channel('online', function ($user) {
 //     return $user ? new UserResource($user) : null;
 // });
+Broadcast::routes(['middleware' => ['web'] ]);
 
 Broadcast::channel('online', function ($user) {
     return $user ? $user : null;

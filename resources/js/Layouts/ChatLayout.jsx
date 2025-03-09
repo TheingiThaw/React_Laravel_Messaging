@@ -29,12 +29,10 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         });
         setShowAttachmentPreview(true);
     };
-
-    console.log('localMessage', localMessage);
-
+    // console.log('localMessage', localMessage);
 
     useEffect(() => {
-        console.log('Preview Attachment:', previewAttachment); // Check the state when it updates
+        // console.log('Preview Attachment:', previewAttachment); // Check the state when it updates
     }, [previewAttachment]);
 
     const createMessage = (message) => {

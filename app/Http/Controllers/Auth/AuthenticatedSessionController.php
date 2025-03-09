@@ -33,7 +33,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
+
+        $request->session()->put('token', $token);
+
+    return response()->json([
+        'token' => $token,
+        'redirect' => route('dashboard', absolute: false)
+    ]);
     }
 
     /**

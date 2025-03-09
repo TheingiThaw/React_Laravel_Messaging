@@ -46,6 +46,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // $token = $user->createToken('laravel_react_messenger')->plainTextToken;
+
         return redirect(route('dashboard', absolute: false));
     }
 }
