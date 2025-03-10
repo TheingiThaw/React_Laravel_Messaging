@@ -36,7 +36,6 @@ class MessageFactory extends Factory
             $group = Group::find($group_id);
             $sender_id = $this->faker->randomElement($group->users->pluck('id')->toArray());
             $receiver_id = null;
-
         }
         else{
             $conversation_id = $this->faker->randomElement(Conversation::pluck('id')->toArray());

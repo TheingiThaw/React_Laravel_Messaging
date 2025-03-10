@@ -33,9 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
+        // $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
 
-        $request->session()->put('token', $token);
+        // $request->session()->put('token', $token);
 
     return response()->json([
         'token' => $token,

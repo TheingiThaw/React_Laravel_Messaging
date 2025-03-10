@@ -10,6 +10,8 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
     const currentUser = page.props.auth.user;
     let classes = "border-transparent";
 
+    // console.log(conversation);
+
     if (selectedConversation) {
         if (!selectedConversation.is_group &&
             !conversation.is_group &&
@@ -25,8 +27,6 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
             classes = "border-blue-500"
         }
     }
-
-
 
 
     return (

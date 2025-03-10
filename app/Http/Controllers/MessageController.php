@@ -68,9 +68,12 @@ class MessageController extends Controller
     }
 
     public function byGroup(Group $group){
+        // Log::info("group", ['group' => $group]);
         $messages = Message::where('group_id', $group->id)
                     ->latest()
                     ->paginate(10);
+
+        // Log::info("groupMessages", ['message' => $messages]);
 
         return inertia('Home', [
             'selectedConversation' => $group->toConversationArray(),

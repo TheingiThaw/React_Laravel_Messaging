@@ -3,6 +3,7 @@ import UserAvatar from './UserAvatar';
 import GroupAvatar from './GroupAvatar';
 
 const ChatHeader = ({ selectedConversation }) => {
+    console.log(selectedConversation);
     return (
         <div className="flex gap-3 p-2">
             <div className="flex items-center">
@@ -23,6 +24,7 @@ const ChatHeader = ({ selectedConversation }) => {
                 <h1>{selectedConversation?.name || 'Group'}</h1>
                 {selectedConversation?.is_group && <p className="text-xs text-slate-400">4 users</p>}
             </div>
+
         </div>
     );
 };

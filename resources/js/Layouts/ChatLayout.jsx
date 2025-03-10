@@ -9,6 +9,9 @@ import MessageAttachments from "@/App/MessageAttachments";
 import AttachmentMessagePreview from "@/App/AttachmentMessagePreview";
 
 const ChatLayout = ({ messages, selectedConversation }) => {
+    // console.log(selectedConversation);
+    // console.log(messages);
+
     const messageContainerRef = useRef();
     const { on } = useEventBus();
 

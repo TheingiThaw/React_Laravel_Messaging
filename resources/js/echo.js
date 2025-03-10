@@ -21,9 +21,7 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
     auth: {
         headers: {
-            'Authorization': 'Bearer ' + token,
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         }
     }
     // auth: {
