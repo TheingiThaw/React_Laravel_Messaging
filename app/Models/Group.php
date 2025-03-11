@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -37,18 +38,26 @@ class Group extends Model
 
     public static function getGroupsForUser(User $user)
     {
-        $query = self::select('groups.*', 'messages.message as last_message', 'messages.created_at as last_message_date')
-                    ->join('group_users','group_users.group_id', 'groups.id')
-                    ->leftJoin('messages', 'messages.id', 'groups.last_message_id')
-                    ->where('group_users.user_id', $user->id)
-                    ->orderBy('messages.created_at', 'desc')
-                    ->orderBy('groups.name');
+        $query = self::with(['lastMessage'])
+            ->select('groups.*', 'messages.message as last_message', 'messages.created_at as last_message_date')
+            ->join('group_users', 'group_users.group_id', 'groups.id')
+            ->leftJoin('messages', 'messages.id', 'groups.last_message_id')
+            ->where('groups.owner_id', $user->id)
+            // ->groupBy('groups.id', 'groups.name', 'groups.description', 'groups.owner_id', 'groups.last_message_id', 'groups.created_at', 'groups.updated_at')
+            ->orderBy('messages.created_at', 'desc')
+            ->get();
 
-        return $query->get();
+        // Log::info('getGroupsForUser', ['query' => $query]);
+
+        return $query;
     }
 
     public function toConversationArray()
     {
+        $last_message = $this->lastMessage;
+        $last_message_date = $last_message ? $last_message->created_at->toDateTimeString() : null;
+
+        // Log::info('users', ['users' => $this->users]);
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -58,8 +67,14 @@ class Group extends Model
             'owner_id' => $this->owner_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'last_message' => $this->last_message,
-            'last_message_date' =>$this->last_message_date ? $this->last_message_date . ' UTC' : null,
+            'last_message' => $last_message->message ?? null,
+            'last_message_date' =>$last_message_date ? $last_message_date . ' UTC' : null,
+            'users' => $this->users->map(function ($user){
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ];
+            }),
         ];
     }
 

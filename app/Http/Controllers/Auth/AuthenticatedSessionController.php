@@ -38,7 +38,6 @@ class AuthenticatedSessionController extends Controller
         // $request->session()->put('token', $token);
 
     return response()->json([
-        'token' => $token,
         'redirect' => route('dashboard', absolute: false)
     ]);
     }

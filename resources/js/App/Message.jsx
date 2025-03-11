@@ -10,6 +10,7 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
     const page = usePage();
     const currentUser = page.props.auth.user;
 
+    // console.log('selectedConversation', selectedConversation);
     // console.log('message', message);
 
     return (
@@ -17,11 +18,19 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
             <div className={`chat ${message.sender_id === currentUser.id ? 'chat-end' : 'chat-start'}`}>
                 <div className="chat-image avatar">
                     {message.receiver_id && message.sender_id != currentUser.id ? <UserAvatar conversation={selectedConversation} /> : (
-                        message.group_id ? <GroupAvatar conversation={selectedConversation} /> : null
+                        message.group_id && message.sender_id != currentUser.id
+                            ? <UserAvatar conversation={selectedConversation} />
+                            : null
                     )}
                 </div>
                 <div className="chat-header">
-                    {message.sender_id === currentUser.id ? '' : selectedConversation.name}
+                    {message.sender_id === currentUser.id ? '' : (
+                        message.receiver_id ? selectedConversation.name : (
+                            message.group_id ?
+                                (selectedConversation.users.find(user => user.id === message.sender_id)?.name || 'Unknown User')
+                                : null
+                        )
+                    )}
                     <time className="text-xs opacity-50">{formatDateLong(new Date(message.created_at))}</time>
                 </div>
                 <div className="flex items-center">

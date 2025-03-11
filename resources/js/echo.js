@@ -3,13 +3,13 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
-const token = localStorage.getItem('token');
-console.log('Token:', token); // Debugging
+// const token = localStorage.getItem('token');
+// console.log('Token:', token); // Debugging
 
-if (!token) {
-    console.error('Token is missing!');
-    // Handle missing token logic
-}
+// if (!token) {
+//     console.error('Token is missing!');
+//     // Handle missing token logic
+// }
 
 window.Echo = new Echo({
     broadcaster: 'reverb',

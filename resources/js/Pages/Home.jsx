@@ -6,6 +6,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 const Home = ({ children, messages = null, selectedConversation = null }) => {
     const [localMessage, setLocalMessage] = useState([]);
 
+    console.log(selectedConversation);
+
     useEffect(() => {
         setLocalMessage(messages ? [...messages].reverse() : []);
     }, [messages, selectedConversation]);
