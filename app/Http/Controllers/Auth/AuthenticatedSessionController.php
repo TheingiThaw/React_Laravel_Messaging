@@ -29,17 +29,38 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+    //     $request->authenticate();
 
-        $request->session()->regenerate();
+    //     $request->session()->regenerate();
 
-        // $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
+    //     // $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
 
-        // $request->session()->put('token', $token);
+    //     // $request->session()->put('token', $token);
 
-    return response()->json([
-        'redirect' => route('dashboard', absolute: false)
-    ]);
+    // return response()->json([
+    //     'redirect' => route('dashboard', absolute: false)
+    // ]);
+
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
+
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'redirect' => route('dashboard', absolute: false)
+                    ]);
+                }
+
+                return redirect()->intended('dashboard');
+            }
+
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ]);
     }
 
     /**

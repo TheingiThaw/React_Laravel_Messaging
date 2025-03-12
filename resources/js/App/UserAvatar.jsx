@@ -5,7 +5,7 @@ const UserAvatar = ({ conversation, isUserOnline }) => {
 
     const senderUser = conversation.users?.find(user => user.id === conversation.sender_id);
 
-    console.log('senderUser', senderUser);
+    // console.log('senderUser', senderUser);
 
     return (
         <div className={`avatar ${onlineStatus}`}>

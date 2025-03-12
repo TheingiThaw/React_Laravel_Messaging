@@ -43,7 +43,17 @@ class Group extends Model
             ->join('group_users', 'group_users.group_id', 'groups.id')
             ->leftJoin('messages', 'messages.id', 'groups.last_message_id')
             ->where('groups.owner_id', $user->id)
-            // ->groupBy('groups.id', 'groups.name', 'groups.description', 'groups.owner_id', 'groups.last_message_id', 'groups.created_at', 'groups.updated_at')
+            ->groupBy(
+                'groups.id',
+                'groups.name',
+                'groups.description',
+                'groups.owner_id',
+                'groups.last_message_id',
+                'groups.created_at',
+                'groups.updated_at',
+                'messages.message',
+                'messages.created_at'
+            )
             ->orderBy('messages.created_at', 'desc')
             ->get();
 
