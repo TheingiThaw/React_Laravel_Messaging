@@ -4,8 +4,9 @@ import React from 'react'
 const GroupAvatar = () => {
 
     return (
-        <div className="w-12 rounded-full flex align-items-center justify-center bg-neutral">
-            <UserGroupIcon className='w-12 text-white' />
+        <div className="w-12 h-12 rounded-full flex align-items-center justify-center bg-neutral">
+            <UserGroupIcon className=' w-6 text-white' />
+            {/* w-12 */}
         </div>
     )
 }

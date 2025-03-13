@@ -158,7 +158,9 @@ const Sidebar = () => {
                 <div className={`transition-all w-full sm:w-[220px] md:w-[300px] flex flex-col overflow-hidden ${selectedConversation ? '-ml-[100%]' : ''}`}></div>
                 <div className=' w-9/12 mx-auto text-base-content mt-5 flex justify-between'>
                     <h1 className='text-2xl font-bold'>Chat</h1>
-                    <button onClick={() => setShowGroupModal(true)}>
+                    <button onClick={() => {
+                        console.log('clicked'); setShowGroupModal(true);
+                    }}>
                         <PencilSquareIcon className='h-5 w-5' />
                     </button>
                 </div>
@@ -180,7 +182,7 @@ const Sidebar = () => {
                 </div>
             </div>
             <GroupModal
-                show={setShowGroupModal}
+                show={showGroupModal}
                 onClose={() => setShowGroupModal(false)}
             />
         </>

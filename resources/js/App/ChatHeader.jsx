@@ -42,7 +42,7 @@ const ChatHeader = ({ selectedConversation }) => {
                 </div>
                 <div className=" block justify-center items-center">
                     <h1>{selectedConversation?.name || 'Group'}</h1>
-                    {selectedConversation?.is_group && <p className="text-xs text-slate-400">4 users</p>}
+                    {selectedConversation?.is_group && <p className="text-xs text-slate-400">{`${selectedConversation.users.length} users`}</p>}
                 </div>
             </div>
             {selectedConversation?.is_group && (

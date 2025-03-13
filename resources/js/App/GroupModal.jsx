@@ -9,7 +9,9 @@ import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import UserPicker from './UserPicker';
 
-const GroupModal = (show = false, onClose = () => { }) => {
+const GroupModal = ({ show, onClose = () => { } }) => {
+    if (!show) return null;
+
     const [group, setGroup] = useState({});
     const [showGroupModal, setShowGroupModal] = useState(false);
     const page = usePage();
@@ -19,9 +21,7 @@ const GroupModal = (show = false, onClose = () => { }) => {
 
     const users = conversations.filter(c => !c.is_group);
 
-    const groupUsers = conversations.filter(c => c.is_group);
     console.log(users);
-    console.log(groupUsers);
 
     const { data, setData, put, post, reset, errors } = useForm({
         id: '',
@@ -29,12 +29,6 @@ const GroupModal = (show = false, onClose = () => { }) => {
         description: '',
         user_ids: []
     });
-
-    // useEffect(() => {
-    //     if (conversations?.group_id) {
-    //         setGroup(conversations);
-    //     }
-    // }, [conversations]);
 
     const createOrUpdateGroup = (e) => {
         e.preventDefault();
@@ -67,17 +61,27 @@ const GroupModal = (show = false, onClose = () => { }) => {
     const closeModal = () => {
         setShowGroupModal(false);
         reset();
+        onClose();
     };
 
     useEffect(() => {
         return on('GroupModal.show', (group) => {
+            setData({
+                name: group.name,
+                description: group.description,
+                user_ids: group.users.filter(u => u.id != group.owner_id).map(u => u.id)
+            })
             setShowGroupModal(true);
             setGroup(group);
         });
     }, [on]);
 
+    console.log('data', data);
+    console.log('group', group);
+
+
     return (
-        <Modal show={showGroupModal} onClose={() => setShowGroupModal(false)}>
+        <Modal show={show} onClose={() => setShowGroupModal(false)}>
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                     {/* modal header */}
@@ -91,16 +95,20 @@ const GroupModal = (show = false, onClose = () => { }) => {
                         <form onSubmit={createOrUpdateGroup} class="space-y-4" action="#">
                             <div>
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group Name</label>
-                                <TextInput name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required />
+                                <TextInput name="name" id="name" value={group.id && group.name} disabled={!!group.id} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required />
                                 {errors.name && <p class="text-red-500 text-xs mt-1">{errors.name}</p>}
                             </div>
                             <div>
                                 <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                                <TextareaInput name="description" id="description" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                                <TextareaInput name="description" id="description" value={group.id && group.description} placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                                 {errors.description && <p class="text-red-500 text-xs mt-1">{errors.description}</p>}
                             </div>
 
-                            <UserPicker users={groupUsers} />
+                            <UserPicker users={users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) || []}
+                                onSelect={(users) => setData(prevData => ({
+                                    ...prevData,
+                                    user_ids: [...prevData.user_ids, users.id]
+                                }))} />
 
                             <div className='flex gap-3'>
                                 <PrimaryButton onClick={() => closeModal()}>Cancel</PrimaryButton>

@@ -19,7 +19,7 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
                 <div className="chat-image avatar">
                     {message.receiver_id && message.sender_id != currentUser.id ? <UserAvatar conversation={selectedConversation} /> : (
                         message.group_id && message.sender_id != currentUser.id
-                            ? <UserAvatar conversation={selectedConversation} />
+                            ? <UserAvatar conversation={selectedConversation} message={message} />
                             : null
                     )}
                 </div>
@@ -27,7 +27,7 @@ const Message = ({ message, selectedConversation, onAttachmentClick }) => {
                     {message.sender_id === currentUser.id ? '' : (
                         message.receiver_id ? selectedConversation.name : (
                             message.group_id ?
-                                (selectedConversation.users.find(user => user.id === message.sender_id)?.name || 'Unknown User')
+                                (selectedConversation.users && selectedConversation.users.find(user => user.id === message.sender_id)?.name || 'Unknown User')
                                 : null
                         )
                     )}

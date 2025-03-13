@@ -7,7 +7,7 @@ import { ChevronDownIcon, UserCircleIcon } from '@heroicons/react/16/solid'
 
 const UserPicker = ({ users, onSelect }) => {
     const [query, setQuery] = useState('')
-    const [selected, setSelected] = useState([]);
+    const [selected, setSelected] = useState(users || []);
 
     console.log('selected', selected);
 
@@ -20,25 +20,30 @@ const UserPicker = ({ users, onSelect }) => {
 
     console.log('filtered', filteredPeople);
 
+    // const handleSelect = (person) => {
+    //     if (selected.find(u => u.id === person.id)) {
+    //         setSelected(selected.filter(u => u.id !== person.id));
+    //     } else {
+    //         setSelected([...selected, person]);
+    //     }
+    // };
+
     const handleSelect = (person) => {
-        if (selected.find(u => u.id === person.id)) {
-            setSelected(selected.filter(u => u.id !== person.id));
-        } else {
-            setSelected([...selected, person]);
-        }
+        onSelect(person);
+        setSelected(prevSelected => prevSelected.find(u => u.id == person.id) ? prevSelected.filter(u => u.id !== person.id) : [...prevSelected, person]);
     };
 
     return (
         <div className=" h-auto w-full pt-2">
 
-            <Combobox value={selected} onChange={(value) => setSelected(value)} onClose={() => setQuery('')}>
+            <Combobox value={selected} onChange={(value) => handleSelect(value)} onClose={() => setQuery('')}>
                 <div className="relative">
                     <ComboboxInput
                         className={clsx(
                             'w-full rounded-lg border-none bg-black/70 py-1.5 pr-8 pl-3 text-sm/6 text-white',
                             'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
                         )}
-                        displayValue={(person) => person?.name}
+                        displayValue={(person) => person?.length ? `${person.length} users selected` : ''}
                         onChange={(event) => setQuery(event.target.value)}
                     />
                     <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
@@ -60,9 +65,10 @@ const UserPicker = ({ users, onSelect }) => {
                             key={person.id}
                             value={person}
                             className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
-                            onClick={() => handleSelect(person)}
                         >
-                            <CheckIcon className="invisible size-4 fill-white group-data-[selected]:visible" />
+                            {selected.some(u => u.id === person.id) && (
+                                <CheckIcon className="size-4 fill-white" />
+                            )}
                             <div key={person.id} className="text-sm/6 text-white">{person.name}</div>
                         </ComboboxOption>
                     ))}

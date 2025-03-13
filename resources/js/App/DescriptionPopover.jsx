@@ -18,7 +18,8 @@ const DescriptionPopover = ({ conversation }) => {
                         <div className="p-3">
                             <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
                                 <p className="font-semibold text-white">{conversation.name}</p>
-                                <p className="text-white/50">{conversation.description}</p>
+                                <p className="text-white/50">{conversation?.description ? conversation.description : 'No Description'}</p>
+
                             </a>
                         </div>
                     </PopoverPanel>
