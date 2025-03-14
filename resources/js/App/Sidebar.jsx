@@ -14,7 +14,7 @@ const Sidebar = () => {
     const selectedConversation = page.props.selectedConversation;
     const [sortedConversation, setSortedConversation] = useState([]);
     const [localConversation, setLocalConversation] = useState([]);
-    const { on } = useEventBus();
+    const { on, emit } = useEventBus();
 
     const [showGroupModal, setShowGroupModal] = useState(false);
 
@@ -137,10 +137,18 @@ const Sidebar = () => {
     useEffect(() => {
         const offCreated = on('message.created', messageCreate);
         const offDeleted = on('message.deleted', messageDelete);
+        const offGroupDeleted = on('group.deleted', ({ id, name }) => {
+            setLocalConversation(prevConversations => {
+                return prevConversations.filter(con => con.id !== id);
+            });
+
+            emit('toast.show', { message: `Group ${name} deleted successfully` });
+        })
 
         return () => {
             offCreated();
             offDeleted();
+            offGroupDeleted();
         };
     }, []);
 
@@ -181,10 +189,7 @@ const Sidebar = () => {
 
                 </div>
             </div>
-            <GroupModal
-                show={showGroupModal}
-                onClose={() => setShowGroupModal(false)}
-            />
+            <GroupModal show={showGroupModal} onClose={() => setShowGroupModal(false)} />
         </>
     )
 }

@@ -10,10 +10,9 @@ import React, { useEffect, useState } from 'react'
 import UserPicker from './UserPicker';
 
 const GroupModal = ({ show, onClose = () => { } }) => {
-    if (!show) return null;
 
     const [group, setGroup] = useState({});
-    const [showGroupModal, setShowGroupModal] = useState(false);
+    const [showGroupModal, setShowGroupModal] = useState(show);
     const page = usePage();
     const conversations = page.props.auth.conversations;
     console.log(conversations);
@@ -65,29 +64,39 @@ const GroupModal = ({ show, onClose = () => { } }) => {
     };
 
     useEffect(() => {
-        return on('GroupModal.show', (group) => {
+        console.log('Updated showGroupModal:', showGroupModal);
+    }, [showGroupModal]);
+
+    useEffect(() => {
+        const off = on('GroupModal.show', (group) => {
+            console.log('Group data received:', group);
             setData({
                 name: group.name,
                 description: group.description,
-                user_ids: group.users.filter(u => u.id != group.owner_id).map(u => u.id)
-            })
+                user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
+            });
             setShowGroupModal(true);
+            console.log('showGroupModal set to true:', showGroupModal);
             setGroup(group);
         });
+
+        return () => off();
     }, [on]);
 
-    console.log('data', data);
-    console.log('group', group);
+
+
+    console.log('Group data:', group);
+    console.log('showGroupModal state:', showGroupModal);
 
 
     return (
-        <Modal show={show} onClose={() => setShowGroupModal(false)}>
+        <Modal show={showGroupModal} onClose={() => setShowGroupModal(false)}>
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                     {/* modal header */}
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            {conversations.group_id ? `Group ${group.name}` : 'Create Group'}
+                            {group.id ? `Group ${group.name}` : 'Create Group'}
                         </h3>
                     </div>
                     {/* modal body */}
@@ -104,7 +113,7 @@ const GroupModal = ({ show, onClose = () => { } }) => {
                                 {errors.description && <p class="text-red-500 text-xs mt-1">{errors.description}</p>}
                             </div>
 
-                            <UserPicker users={users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) || []}
+                            <UserPicker users={users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) || users}
                                 onSelect={(users) => setData(prevData => ({
                                     ...prevData,
                                     user_ids: [...prevData.user_ids, users.id]
@@ -113,7 +122,7 @@ const GroupModal = ({ show, onClose = () => { } }) => {
                             <div className='flex gap-3'>
                                 <PrimaryButton onClick={() => closeModal()}>Cancel</PrimaryButton>
                                 <SecondaryButton type='submit'>
-                                    {conversations.group_id ? 'Update' : 'Create'}
+                                    {group.id ? 'Update' : 'Create'}
                                 </SecondaryButton>
                             </div>
                         </form>

@@ -50,6 +50,20 @@ function AuthenticatedLayout({ header, children }) {
                 };
 
             })
+
+        if (conversation.is_group) {
+            Echo.private(`group.deleted.${conversation.id}`)
+                .listen('DeleteGroup', (e) => {
+                    emit('toast.show', e.message);
+                })
+                .error((error) => {
+                    console.log('Broadcast Auth Error:', error);
+                });
+
+            return () => {
+                Echo.leave(`group.deleted.${conversation.id}`);
+            };
+        }
     });
 
     return (

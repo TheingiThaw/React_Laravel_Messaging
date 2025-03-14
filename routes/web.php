@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 
@@ -14,6 +15,12 @@ Route::middleware('auth')->group(function (){
     Route::get('chat/older/{message}', [MessageController::class, 'loadOlder'])->name('chat.loadOlder');
     Route::post('message/store', [MessageController::class, 'store'])->name('chat.store');
     Route::delete('message/delete/{id}',[MessageController::class, 'destroy'])->name('chat.delete');
+
+    Route::prefix('group')->group(function () {
+        Route::post('store/{group}', [GroupController::class, 'store'])->name('group.store');
+        Route::delete('delete/{group}', [GroupController::class, 'destroy'])->name('group.destroy');
+        Route::patch('update/{group}', [GroupController::class, 'update'])->name('group.update');
+    });
 });
 
 Route::middleware('auth')->group(function () {

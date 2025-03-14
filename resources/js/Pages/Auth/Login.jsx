@@ -19,7 +19,7 @@ export default function Login({ status, canResetPassword }) {
         post(route('login'), {
             onSuccess: (page) => {
                 const token = page.props.token; // Get token from server response
-                console.log('Received Token:', token);
+                // console.log('Received Token:', token);
 
                 if (token) {
                     localStorage.setItem('token', token);

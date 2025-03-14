@@ -19,3 +19,10 @@ Broadcast::channel("message.user.{userId1}_{userId2}", function ($user, $userId1
 Broadcast::channel('message.group.{groupId}', function ($user, int $groupId){
     return $user->groups()->where('id', $groupId)->exists();
 });
+
+Broadcast::channel('group.deleted.{groupId}', function ($user, int $groupId) {
+    \Log::info("User {$user->id} tried to join group {$groupId}");
+    // return $user->groups()->where('id', $groupId)->exists();
+    return $user->id !== null;
+});
+

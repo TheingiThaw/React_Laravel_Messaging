@@ -10,6 +10,7 @@ const UserPicker = ({ users, onSelect }) => {
     const [selected, setSelected] = useState(users || []);
 
     console.log('selected', selected);
+    console.log('users', users);
 
     const filteredPeople =
         query === ''

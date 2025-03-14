@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/react';
 import UserAvatar from './UserAvatar';
 
 const UserPopover = ({ conversation }) => {
-    console.log(conversation);
+    // console.log(conversation);
     return (
         <div className="flex h-auto justify-center">
             <div className="flex">
@@ -20,7 +20,7 @@ const UserPopover = ({ conversation }) => {
                     >
                         <div className="p-3">
                             {conversation.users.map(user => (
-                                <Link className="flex gap-3 rounded-lg py-2 px-3 transition hover:bg-white/5" href={route('chat.user', user)}>
+                                <Link key={user.id} className="flex gap-3 rounded-lg py-2 px-3 transition hover:bg-white/5" href={route('chat.user', user)}>
                                     <UserAvatar conversation={conversation} />
                                     <p className='text-white flex items-center'>{user.name}</p>
                                 </Link>

@@ -57,7 +57,9 @@ const ChatHeader = ({ selectedConversation }) => {
                                 <div className='tooltip tooltip-left' data-tooltip="Edit Group">
                                     <button
                                         onClick={(ev) => {
-                                            emit('GroupModal.show', selectedConversation)
+                                            console.log('clicked before');
+                                            emit('GroupModal.show', selectedConversation);
+                                            console.log('clicked after', selectedConversation);
                                         }}
                                         className='text-black/60 hover:text-black/90'>
                                         <PencilSquareIcon className='w-6' />
