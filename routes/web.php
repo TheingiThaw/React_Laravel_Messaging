@@ -17,7 +17,7 @@ Route::middleware('auth')->group(function (){
     Route::delete('message/delete/{id}',[MessageController::class, 'destroy'])->name('chat.delete');
 
     Route::prefix('group')->group(function () {
-        Route::post('store/{group}', [GroupController::class, 'store'])->name('group.store');
+        Route::post('store', [GroupController::class, 'store'])->name('group.store');
         Route::delete('delete/{group}', [GroupController::class, 'destroy'])->name('group.destroy');
         Route::patch('update/{group}', [GroupController::class, 'update'])->name('group.update');
     });

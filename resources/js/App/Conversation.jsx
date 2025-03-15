@@ -59,9 +59,9 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
                     )} >
                         <div className='flex gap-1 justify-between items-center'>
                             <h2 className='text-ellipsis overflow-hidden font-semibold text-nowrap'>{conversation.name}</h2>
-                            <p className=' text-xs text-nowrap mt-1 text-gray-500'>{formatDateShort(new Date(conversation.last_message_date))}</p>
+                            <p className=' text-xs text-nowrap mt-1 text-gray-500'>{formatDateShort(new Date(conversation.last_message_date ?? conversation.created_at))}</p>
                         </div>
-                        <p className={`text-nowrap overflow-hidden text-ellipsis ${!conversation.last_message && 'italic'}`}>{conversation.last_message ? conversation.last_message : 'Shared Attachments'}</p>
+                        {conversation.last_message && <p className={`text-nowrap overflow-hidden text-ellipsis ${!conversation.last_message && 'italic'}`}>{conversation.last_message && conversation.last_message}</p>}
                     </div>
 
                     {currentUser.is_admin && conversation.is_user ? (

@@ -134,9 +134,14 @@ const Sidebar = () => {
         })
     }
 
+    const [conversation, setConversation] = useState();
     useEffect(() => {
         const offCreated = on('message.created', messageCreate);
         const offDeleted = on('message.deleted', messageDelete);
+        const offShowModal = on('GroupModal.show', (group) => {
+            setConversation(group);
+            setShowGroupModal(true);
+        });
         const offGroupDeleted = on('group.deleted', ({ id, name }) => {
             setLocalConversation(prevConversations => {
                 return prevConversations.filter(con => con.id !== id);
@@ -148,9 +153,21 @@ const Sidebar = () => {
         return () => {
             offCreated();
             offDeleted();
+            offShowModal();
             offGroupDeleted();
         };
     }, []);
+
+    // useEffect(() => {
+    //     {
+    //         console.log('Updated showGroupModal:', showGroupModal);
+    //         showGroupModal && (
+    //             <GroupModal show={showGroupModal} onClose={() => setShowGroupModal(false)} />
+    //         )
+    //     }
+    // }, [showGroupModal]);
+
+    console.log('showGroupModal outside:', showGroupModal);
 
     useEffect(() => {
         // console.log("page.props.auth.conversations:", page.props.auth.conversations);
@@ -166,8 +183,9 @@ const Sidebar = () => {
                 <div className={`transition-all w-full sm:w-[220px] md:w-[300px] flex flex-col overflow-hidden ${selectedConversation ? '-ml-[100%]' : ''}`}></div>
                 <div className=' w-9/12 mx-auto text-base-content mt-5 flex justify-between'>
                     <h1 className='text-2xl font-bold'>Chat</h1>
-                    <button onClick={() => {
+                    <button onClick={(ev) => {
                         console.log('clicked'); setShowGroupModal(true);
+                        console.log('showGroupModal:', showGroupModal);
                     }}>
                         <PencilSquareIcon className='h-5 w-5' />
                     </button>
@@ -189,7 +207,7 @@ const Sidebar = () => {
 
                 </div>
             </div>
-            <GroupModal show={showGroupModal} onClose={() => setShowGroupModal(false)} />
+            {showGroupModal && <GroupModal conversation={selectedConversation} show={showGroupModal} onClose={() => setShowGroupModal(false)} />}
         </>
     )
 }

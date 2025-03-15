@@ -57,9 +57,18 @@ const ChatHeader = ({ selectedConversation }) => {
                                 <div className='tooltip tooltip-left' data-tooltip="Edit Group">
                                     <button
                                         onClick={(ev) => {
-                                            console.log('clicked before');
-                                            emit('GroupModal.show', selectedConversation);
-                                            console.log('clicked after', selectedConversation);
+                                            // console.log('selected con', selectedConversation);
+                                            // // emit('GroupModal.show', selectedConversation);
+                                            // console.log('Emitting GroupModal.show with:', selectedConversation);
+                                            console.log('Emitting GroupModal.show with hardcoded data');
+                                            emit('GroupModal.show', {
+                                                id: 8,
+                                                name: 'Test Group',
+                                                description: 'This is a test description',
+                                                users: [{ id: 1, name: 'Kyaw' }, { id: 2, name: 'Khin' }],
+                                                owner_id: 1
+                                            });
+                                            console.log('Emit complete');
                                         }}
                                         className='text-black/60 hover:text-black/90'>
                                         <PencilSquareIcon className='w-6' />
@@ -75,8 +84,9 @@ const ChatHeader = ({ selectedConversation }) => {
                         )}
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 

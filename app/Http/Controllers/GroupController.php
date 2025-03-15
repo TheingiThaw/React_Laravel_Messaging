@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Jobs\DeleteGroupJob;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 
@@ -30,13 +31,19 @@ class GroupController extends Controller
      */
     public function store(StoreGroupRequest $request)
     {
+        // dd($request);
         $data = $request->validated();
         $user_ids = $data['user_ids'] ?? [];
+
         $group = Group::create($data);
 
-        $group->user()->attach(array_unique([$group->owner_id, ...$user_ids]));
+        Log::info('group', ['group' => $group]);
 
-        return response()->back();
+        $group->users()->attach(array_unique([$group->owner_id, ...$user_ids]));
+
+        Log::info('group stored');
+
+        return back();
     }
 
     /**
@@ -67,7 +74,7 @@ class GroupController extends Controller
         $group->users()->detach();
         $group->users()->attach(array_unique([$group->owner_id, ...$user_ids]));
 
-        return response()->back();
+        return back();
     }
 
     /**
@@ -79,7 +86,9 @@ class GroupController extends Controller
             return response()->json(['message' => 'You are not allowed to delete this group'], 403);
         }
 
-        DeleteGroupJob::dispatch($group)->delay(now()->addSeconds(5));
+        DeleteGroupJob::dispatch($group);
+
+        Log::info('group deleted');
 
         return response()->json(['message' => 'Group was scheduled for deletion']);
     }

@@ -21,8 +21,6 @@ Broadcast::channel('message.group.{groupId}', function ($user, int $groupId){
 });
 
 Broadcast::channel('group.deleted.{groupId}', function ($user, int $groupId) {
-    \Log::info("User {$user->id} tried to join group {$groupId}");
-    // return $user->groups()->where('id', $groupId)->exists();
-    return $user->id !== null;
+    return $user->groups->contains('id', $groupId) ; 
 });
 

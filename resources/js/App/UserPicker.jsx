@@ -5,12 +5,12 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import { ChevronDownIcon, UserCircleIcon } from '@heroicons/react/16/solid'
 
-const UserPicker = ({ users, onSelect }) => {
+const UserPicker = ({ value, users, onSelect }) => {
     const [query, setQuery] = useState('')
-    const [selected, setSelected] = useState(users || []);
+    const [selected, setSelected] = useState(value);
 
-    console.log('selected', selected);
-    console.log('users', users);
+    // console.log('selected', selected);
+    // console.log('users', users);
 
     const filteredPeople =
         query === ''
@@ -19,7 +19,7 @@ const UserPicker = ({ users, onSelect }) => {
                 return person.name.toLowerCase().includes(query.toLowerCase())
             })
 
-    console.log('filtered', filteredPeople);
+    // console.log('filtered', filteredPeople);
 
     // const handleSelect = (person) => {
     //     if (selected.find(u => u.id === person.id)) {
@@ -44,7 +44,7 @@ const UserPicker = ({ users, onSelect }) => {
                             'w-full rounded-lg border-none bg-black/70 py-1.5 pr-8 pl-3 text-sm/6 text-white',
                             'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
                         )}
-                        displayValue={(person) => person?.length ? `${person.length} users selected` : ''}
+                        displayValue={(person) => person?.length ? `${person.length} users selected` : 'Select User'}
                         onChange={(event) => setQuery(event.target.value)}
                     />
                     <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">

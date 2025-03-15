@@ -8,21 +8,23 @@ import { Description } from '@headlessui/react';
 import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import UserPicker from './UserPicker';
+import InputError from '@/Components/InputError';
 
-const GroupModal = ({ show, onClose = () => { } }) => {
+const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
+    console.log('show', show);
+    console.log('conversation', conversation)
 
     const [group, setGroup] = useState({});
-    const [showGroupModal, setShowGroupModal] = useState(show);
     const page = usePage();
     const conversations = page.props.auth.conversations;
-    console.log(conversations);
+    console.log('conversations', conversations);
     const { on, emit } = useEventBus();
 
     const users = conversations.filter(c => !c.is_group);
 
-    console.log(users);
+    // console.log('users', users);
 
-    const { data, setData, put, post, reset, errors } = useForm({
+    const { data, setData, processing, put, post, patch, reset, errors } = useForm({
         id: '',
         name: '',
         description: '',
@@ -34,7 +36,7 @@ const GroupModal = ({ show, onClose = () => { } }) => {
 
         if (group.id) {
             //update group
-            put(route('group.update', group.id), {
+            patch(route('group.update', group.id), {
                 onSuccess: () => {
                     closeModal();
                     emit('toast.show', { message: `Group ${group.name} updated successfully` });
@@ -43,54 +45,116 @@ const GroupModal = ({ show, onClose = () => { } }) => {
             return;
         }
         post(route('group.store'), {
-            //     setData({
-
-            //         'name': e.target.name.value,
-            //     'description': e.target.description.value,
-            //     'user_ids': conversation.users.filter(u => u.id != conversation.owner_id).map(u => u.id),
-            // });
             onSuccess: () => {
+                console.log('group stored');
                 emit('toast.show', { message: `Group ${group.name} created successfully` });
                 closeModal();
+            },
+            onError: (error) => {
+                console.log('error occured', error)
             }
         })
 
     }
 
     const closeModal = () => {
-        setShowGroupModal(false);
         reset();
         onClose();
     };
 
-    useEffect(() => {
-        console.log('Updated showGroupModal:', showGroupModal);
-    }, [showGroupModal]);
+    // useEffect(() => {
+    //     // console.log('useEffect is running and binding event listener');
+    //     // return on('GroupModal.show', (group) => {
+    //     //     console.log('Group data received:', group);
+    //     //     debugger;
+    //     //     setData({
+    //     //         name: group.name,
+    //     //         description: group.description,
+    //     //         user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
+    //     //     });
+    //     //     console.log('data', data);
+    //     //     console.log(show);
+    //     //     setGroup(group);
+    //     //     setTimeout(() => {
+    //     //         console.log('showGroupModal set to true after delay:', show);
+    //     //     }, 100);
+    //     // });
+
+    //     console.log('✅ useEffect is running and binding event listener');
+
+    //     const off = on('GroupModal.show', (group) => {
+    //         setGroup(group);
+    //         console.log('🚀 Group data received:', group);
+    //         debugger; // Should pause execution if event is fired
+
+    //         setData({
+    //             name: group.name,
+    //             description: group.description,
+    //             user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id),
+    //         });
+
+    //         console.log('⚠️ Data update scheduled but will not reflect immediately!');
+    //     });
+
+    //     return () => off();
+
+    //     // const off = on('GroupModal.show', (group) => {
+    //     //     console.log('Group data received:', group); // Ensure this fires
+    //     //     setData({
+    //     //         name: group.name,
+    //     //         description: group.description,
+    //     //         user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
+    //     //     });
+    //     //     setGroup(group);
+    //     // });
+
+    //     // return () => off();
+
+    // }, [on]);
+
+    // useEffect(() => {
+    //     console.log('Binding GroupModal.show listener');
+    //     return on('GroupModal.show', (group) => {
+
+    //         console.log('🚀 Group data received:', group);
+    //         debugger; // Ensure event fires
+
+    //         setData((prevData) => ({
+    //             ...prevData, // Spread to keep other properties
+    //             name: group.name,
+    //             description: group.description,
+    //             user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id),
+    //         }));
+
+    //         setGroup(group);
+    //     });
+    // }, [on]);
 
     useEffect(() => {
-        const off = on('GroupModal.show', (group) => {
-            console.log('Group data received:', group);
-            setData({
-                name: group.name,
-                description: group.description,
-                user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
-            });
-            setShowGroupModal(true);
-            console.log('showGroupModal set to true:', showGroupModal);
-            setGroup(group);
+        console.log('useEffect is running for GroupModal.show listener setup');
+        // const off = on('GroupModal.show', (group) => {
+        //     console.log('🚀 Group data received:', group); // Ensure this appears
+
+        setGroup(conversation);
+        setData({
+            name: conversation.name,
+            description: conversation.description,
+            user_ids: conversation.users.filter(u => u.id !== group.owner_id).map(u => u.id)
         });
+        // });
 
-        return () => off();
+        // return () => {
+        //     console.log('Cleaning up GroupModal.show listener');
+        //     off();
+        // };
     }, [on]);
 
-
-
-    console.log('Group data:', group);
-    console.log('showGroupModal state:', showGroupModal);
-
+    useEffect(() => {
+        console.log('📌 Updated data:', data);
+    }, [data]);
 
     return (
-        <Modal show={showGroupModal} onClose={() => setShowGroupModal(false)}>
+        <Modal show={show} onClose={closeModal}>
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                     {/* modal header */}
@@ -104,24 +168,42 @@ const GroupModal = ({ show, onClose = () => { } }) => {
                         <form onSubmit={createOrUpdateGroup} class="space-y-4" action="#">
                             <div>
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group Name</label>
-                                <TextInput name="name" id="name" value={group.id && group.name} disabled={!!group.id} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required />
-                                {errors.name && <p class="text-red-500 text-xs mt-1">{errors.name}</p>}
+                                <TextInput
+                                    name="name"
+                                    id="name"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    disabled={!!group.id}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    placeholder="Enter group name"
+                                    required
+                                />
+                                <InputError message={errors.name} />
                             </div>
                             <div>
                                 <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                                <TextareaInput name="description" id="description" value={group.id && group.description} placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                                {errors.description && <p class="text-red-500 text-xs mt-1">{errors.description}</p>}
+                                <TextareaInput
+                                    name="description"
+                                    id="description"
+                                    value={data.description}  // ✅ Controlled value
+                                    onChange={(e) => setData('description', e.target.value)}  // ✅ Ensure updates
+                                    placeholder="Enter group description"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    required
+                                />
+                                <InputError message={errors.description} />
                             </div>
 
-                            <UserPicker users={users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) || users}
+                            <UserPicker value={group.id ? users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) : []}
+                                users={users}
                                 onSelect={(users) => setData(prevData => ({
                                     ...prevData,
                                     user_ids: [...prevData.user_ids, users.id]
                                 }))} />
 
                             <div className='flex gap-3'>
-                                <PrimaryButton onClick={() => closeModal()}>Cancel</PrimaryButton>
-                                <SecondaryButton type='submit'>
+                                <PrimaryButton type="button" onClick={closeModal}>Cancel</PrimaryButton>
+                                <SecondaryButton type='submit' disabled={processing}>
                                     {group.id ? 'Update' : 'Create'}
                                 </SecondaryButton>
                             </div>

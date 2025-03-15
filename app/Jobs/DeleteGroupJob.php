@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Jobs;
+use App\Models\Group;
+// use App\Jobs\Log;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Events\DeleteGroup;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeleteGroupJob implements ShouldQueue
 {
@@ -22,6 +26,11 @@ class DeleteGroupJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // Log::info("job start");
+        $id = $this->group->id;
+        $name = $this->group->name;
+
+        //remove last message
         $this->group->last_message_id = null;
         $this->group->save();
 
@@ -31,10 +40,11 @@ class DeleteGroupJob implements ShouldQueue
         //remove all users
         $this->group->users()->detach();
 
-        //remove last message
-        $this->group->last_message_id->delete();
-
         //remove group
         $this->group->delete();
+
+        // Log::info("job done");
+
+        DeleteGroup::dispatch($id, $name);
     }
 }

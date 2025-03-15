@@ -18,7 +18,7 @@ class DeleteGroup implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public Group $group)
+    public function __construct(public int $id, public string $name)
     {
         //
     }
@@ -30,16 +30,16 @@ class DeleteGroup implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        \Log::info("{$this->group->id} ");
+        \Log::info("{$this->id} ");
         return [
-            new PrivateChannel('group.deleted.' . $this->group->id),
+            new PrivateChannel('group.deleted.' . $this->id),
         ];
     }
 
-    public function braodcastWith(): array {
-        return [
-            'id' => $this->group->id,
-            'message' => "Group {$this->group->name} was deleted",
-        ];
-    }
+    // public function braodcastWith(): array {
+    //     return [
+    //         'id' => $this->id,
+    //         'name' => $this->name
+    //     ];
+    // }
 }
