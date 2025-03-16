@@ -88,10 +88,14 @@ class Group extends Model
         ];
     }
 
-    public static function uploadGroupWithMessage($groupId, $message){
-        return self::updateOrCreate([
-            'id' => $groupId,
-            'last_message_id' => $message->id
-        ]);
+    public static function updateGroupWithMessage($groupId, $message){
+        // Log::info('message_id', ['message-id' => $message->id, 'group' => $group]);
+        return self::updateOrCreate(
+            ['id' => $groupId],
+            [
+
+                'last_message_id' => $message->id
+            ]
+        );
     }
 }

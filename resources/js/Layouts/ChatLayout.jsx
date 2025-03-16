@@ -43,6 +43,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
             && selectedConversation.is_group
             && selectedConversation.id == message.group_id) {
             setLocalMessage((prevMessage) => {
+                console.log('group message updated');
                 if (!prevMessage.some((msg) => msg.id === message.id)) {
                     return [...prevMessage, message];
                 }

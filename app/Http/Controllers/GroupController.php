@@ -86,9 +86,10 @@ class GroupController extends Controller
             return response()->json(['message' => 'You are not allowed to delete this group'], 403);
         }
 
-        DeleteGroupJob::dispatch($group);
+        Log::info('group', ['group' => $group]);
 
-        Log::info('group deleted');
+        DeleteGroupJob::dispatch($group->id);
+
 
         return response()->json(['message' => 'Group was scheduled for deletion']);
     }

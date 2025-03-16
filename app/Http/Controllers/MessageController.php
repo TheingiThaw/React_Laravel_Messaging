@@ -111,7 +111,7 @@ class MessageController extends Controller
     }
 
     public function store(StoreMessageRequest $request) {
-        // \Log::info($request->all());
+        \Log::info($request->all());
         try {
             $data = $request->validated();
             $files = $data['attachments'] ?? [];
@@ -142,12 +142,13 @@ class MessageController extends Controller
             if ($receiver_id) {
                 Conversation::updateConversationWithMessage($receiver_id, $data['sender_id'], $message);
             } else {
+                // Log::info('group', ['groupId' => $groupId, 'message' => $message]);
                 Group::updateGroupWithMessage($groupId, $message);
             }
 
             $message->load('sender');
 
-            // \Log::info('message', ['message' => $message]);
+            \Log::info('message', ['message' => $message]);
             SocketMessage::dispatch($message);
             return $message;
         } catch (Throwable $e) {

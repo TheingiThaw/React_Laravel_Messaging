@@ -9,8 +9,6 @@ import AttachmentPreview from "./AttachmentPreview";
 import CustomAudioPlayer from "./CustomAudioPlayer";
 import AudioRecorder from "./AudioRecorder";
 
-
-
 const MessageInput = ({ conversation }) => {
     const authUser = usePage().props.auth.user;
     const [newMessage, setNewMessage] = useState('');
@@ -50,7 +48,7 @@ const MessageInput = ({ conversation }) => {
 
         setMessageSending(true);
         console.log('formdata', formData);
-        console.log('chosen File in function', chosenFile);
+        // console.log('chosen File in function', chosenFile);
 
         axios.post(route('chat.store'), formData, {
             onUploadProgress: (ProgressEvent) => {
@@ -67,6 +65,7 @@ const MessageInput = ({ conversation }) => {
             setChosenFile([]);
             setInputErrorMsg(err?.response?.data?.message || 'An error occured in sending message');
         }).then(res => {
+            console.log('message sent successful', res.data);
             setNewMessage('');
             setMessageSending(false);
             setInputErrorMsg('');
@@ -104,7 +103,7 @@ const MessageInput = ({ conversation }) => {
             message['group_id'] = conversation.id;
         }
 
-        console.log("Sending Payload:", message);
+        // console.log("Sending Payload:", message);
 
         axios.post(route('chat.store'), message, {
             headers: {
@@ -113,8 +112,8 @@ const MessageInput = ({ conversation }) => {
         }).catch(error => {
             console.error("Error:", error.response?.data || error.message);
         })
-            .then(() => {
-                console.log("Response:", response.data);
+            .then((response) => {
+                // console.log("Response:", response.data);
                 setMessageSending(false);
             });
 

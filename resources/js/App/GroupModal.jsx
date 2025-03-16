@@ -12,7 +12,6 @@ import InputError from '@/Components/InputError';
 
 const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
     console.log('show', show);
-    console.log('conversation', conversation)
 
     const [group, setGroup] = useState({});
     const page = usePage();
@@ -39,7 +38,7 @@ const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
             patch(route('group.update', group.id), {
                 onSuccess: () => {
                     closeModal();
-                    emit('toast.show', { message: `Group ${group.name} updated successfully` });
+                    emit('toast.show', `Group ${group.name} updated successfully`);
                 }
             })
             return;
@@ -47,7 +46,7 @@ const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
         post(route('group.store'), {
             onSuccess: () => {
                 console.log('group stored');
-                emit('toast.show', { message: `Group ${group.name} created successfully` });
+                emit('toast.show', `Group ${group.name} created successfully`);
                 closeModal();
             },
             onError: (error) => {
@@ -58,105 +57,62 @@ const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
     }
 
     const closeModal = () => {
+        setGroup({});
         reset();
         onClose();
     };
 
-    // useEffect(() => {
-    //     // console.log('useEffect is running and binding event listener');
-    //     // return on('GroupModal.show', (group) => {
-    //     //     console.log('Group data received:', group);
-    //     //     debugger;
-    //     //     setData({
-    //     //         name: group.name,
-    //     //         description: group.description,
-    //     //         user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
-    //     //     });
-    //     //     console.log('data', data);
-    //     //     console.log(show);
-    //     //     setGroup(group);
-    //     //     setTimeout(() => {
-    //     //         console.log('showGroupModal set to true after delay:', show);
-    //     //     }, 100);
-    //     // });
-
-    //     console.log('✅ useEffect is running and binding event listener');
-
-    //     const off = on('GroupModal.show', (group) => {
-    //         setGroup(group);
-    //         console.log('🚀 Group data received:', group);
-    //         debugger; // Should pause execution if event is fired
-
-    //         setData({
-    //             name: group.name,
-    //             description: group.description,
-    //             user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id),
-    //         });
-
-    //         console.log('⚠️ Data update scheduled but will not reflect immediately!');
-    //     });
-
-    //     return () => off();
-
-    //     // const off = on('GroupModal.show', (group) => {
-    //     //     console.log('Group data received:', group); // Ensure this fires
-    //     //     setData({
-    //     //         name: group.name,
-    //     //         description: group.description,
-    //     //         user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id)
-    //     //     });
-    //     //     setGroup(group);
-    //     // });
-
-    //     // return () => off();
-
-    // }, [on]);
+    console.log('after close', data);
 
     // useEffect(() => {
-    //     console.log('Binding GroupModal.show listener');
-    //     return on('GroupModal.show', (group) => {
-
-    //         console.log('🚀 Group data received:', group);
-    //         debugger; // Ensure event fires
-
-    //         setData((prevData) => ({
-    //             ...prevData, // Spread to keep other properties
-    //             name: group.name,
-    //             description: group.description,
-    //             user_ids: group.users.filter(u => u.id !== group.owner_id).map(u => u.id),
-    //         }));
-
-    //         setGroup(group);
-    //     });
+    //     console.log('conversation', conversation);
+    //     setGroup(conversation);
+    //     setData(prevData => ({
+    //         ...prevData,
+    //         name: conversation.name,
+    //         description: conversation.description,
+    //         user_ids: conversation.users
+    //             ? conversation.users.filter(u => u.id !== group.owner_id).map(u => u.id)
+    //             : []
+    //     }));
     // }, [on]);
 
     useEffect(() => {
-        console.log('useEffect is running for GroupModal.show listener setup');
-        // const off = on('GroupModal.show', (group) => {
-        //     console.log('🚀 Group data received:', group); // Ensure this appears
+        console.log('useEffect running for GroupModal.show');
 
-        setGroup(conversation);
-        setData({
-            name: conversation.name,
-            description: conversation.description,
-            user_ids: conversation.users.filter(u => u.id !== group.owner_id).map(u => u.id)
-        });
-        // });
+        if (conversation && show) {
+            console.log('Setting group data:', conversation);
 
-        // return () => {
-        //     console.log('Cleaning up GroupModal.show listener');
-        //     off();
-        // };
-    }, [on]);
+            setGroup(conversation); // Ensure group updates first
 
+            setData({
+                id: conversation.id || '',
+                name: conversation.name || '',
+                description: conversation.description || '',
+                user_ids: conversation.users
+                    ? conversation.users.filter(u => u.id !== conversation.owner_id).map(u => u.id)
+                    : []
+            });
+        } else {
+            // Reset when creating a new group or after closing the modal
+            setGroup({});
+            reset();
+        }
+    }, [conversation, show]); // Depend on conversation & show state
+
+    console.log('after close 1', data);
     useEffect(() => {
         console.log('📌 Updated data:', data);
     }, [data]);
 
+    console.log('group.owner_id:', group.owner_id);
+    console.log('data.user_ids:', data.user_ids);
+    console.log('Filtered users:', users.filter(u => group.owner_id && u.id !== group.owner_id && data.user_ids.includes(u.id)));
+
     return (
         <Modal show={show} onClose={closeModal}>
-            <div class="relative p-4 w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <div class="relative p-4 w-full max-h-full">
+                <div class="relative bg-white w-full rounded-lg shadow-sm dark:bg-gray-700">
                     {/* modal header */}
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
@@ -194,12 +150,14 @@ const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
                                 <InputError message={errors.description} />
                             </div>
 
-                            <UserPicker value={group.id ? users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) : []}
+                            <UserPicker value={data.user_ids ? users.filter(u => group.owner_id != u.id && data.user_ids.includes(u.id)) : []}
                                 users={users}
-                                onSelect={(users) => setData(prevData => ({
-                                    ...prevData,
-                                    user_ids: [...prevData.user_ids, users.id]
-                                }))} />
+                                onSelect={(users) => {
+                                    setData(prevData => ({
+                                        ...prevData,
+                                        user_ids: [...prevData.user_ids, users.id]
+                                    }))
+                                }} />
 
                             <div className='flex gap-3'>
                                 <PrimaryButton type="button" onClick={closeModal}>Cancel</PrimaryButton>

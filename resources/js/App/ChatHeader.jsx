@@ -18,7 +18,7 @@ const ChatHeader = ({ selectedConversation }) => {
         }
         axios.delete(route('group.destroy', selectedConversation.id))
             .then(() => {
-                emit('toast.show', { message: `Group ${selectedConversation.name} deleted successfully` });
+                emit('toast.show', `Group ${selectedConversation.name} deleted successfully`);
             })
             .catch(err => console.error(err));
     };
@@ -57,17 +57,8 @@ const ChatHeader = ({ selectedConversation }) => {
                                 <div className='tooltip tooltip-left' data-tooltip="Edit Group">
                                     <button
                                         onClick={(ev) => {
-                                            // console.log('selected con', selectedConversation);
-                                            // // emit('GroupModal.show', selectedConversation);
-                                            // console.log('Emitting GroupModal.show with:', selectedConversation);
                                             console.log('Emitting GroupModal.show with hardcoded data');
-                                            emit('GroupModal.show', {
-                                                id: 8,
-                                                name: 'Test Group',
-                                                description: 'This is a test description',
-                                                users: [{ id: 1, name: 'Kyaw' }, { id: 2, name: 'Khin' }],
-                                                owner_id: 1
-                                            });
+                                            emit('GroupModal.show', selectedConversation);
                                             console.log('Emit complete');
                                         }}
                                         className='text-black/60 hover:text-black/90'>

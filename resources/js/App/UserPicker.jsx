@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
@@ -9,8 +9,13 @@ const UserPicker = ({ value, users, onSelect }) => {
     const [query, setQuery] = useState('')
     const [selected, setSelected] = useState(value);
 
-    // console.log('selected', selected);
-    // console.log('users', users);
+    useEffect(() => {
+        setSelected(value);
+    }, [value]);
+
+    console.log('value', value);
+    console.log('selected', selected);
+    console.log('users', users);
 
     const filteredPeople =
         query === ''
@@ -76,7 +81,7 @@ const UserPicker = ({ value, users, onSelect }) => {
                 </ComboboxOptions>
             </Combobox >
             {selected.length > 0 && (
-                <div className="flex gap-3 mt-2">
+                <div className="flex flex-wrap gap-3 mt-2">
                     {selected.map((u) => (
                         <div key={u.id} className="badge badge-soft badge-primary w-auto h-auto">{u.name}</div>
                     ))}

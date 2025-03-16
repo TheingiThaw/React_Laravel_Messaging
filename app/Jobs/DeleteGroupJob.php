@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 use App\Models\Group;
-// use App\Jobs\Log;
+
 
 use App\Events\DeleteGroup;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +16,7 @@ class DeleteGroupJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Group $group)
+    public function __construct(public int $groupId)
     {
         //
     }
@@ -26,8 +26,15 @@ class DeleteGroupJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // Log::info("job start");
-        $id = $this->group->id;
+        $group = Group::with('messages', 'users')->find($this->groupId);
+
+        if (!$group) {
+            Log::info("Group not found, maybe already deleted.");
+            return;
+        }
+
+        Log::info("job start", ['group data' => $group]);
+
         $name = $this->group->name;
 
         //remove last message
@@ -35,7 +42,10 @@ class DeleteGroupJob implements ShouldQueue
         $this->group->save();
 
         //remove messages
-        $this->group->messages()->each()->delete();
+        $this->group->load('messages');
+        $this->group->messages->each(function ($message) {
+            $message->delete();
+        });
 
         //remove all users
         $this->group->users()->detach();
@@ -43,8 +53,8 @@ class DeleteGroupJob implements ShouldQueue
         //remove group
         $this->group->delete();
 
-        // Log::info("job done");
+        Log::info("job done");
 
-        DeleteGroup::dispatch($id, $name);
+        DeleteGroup::dispatch($groupId, $name);
     }
 }

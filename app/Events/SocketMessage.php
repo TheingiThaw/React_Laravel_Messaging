@@ -2,7 +2,9 @@
 
 namespace App\Events;
 
+
 use App\Models\Message;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use App\Http\Resources\MessageResource;
@@ -27,6 +29,7 @@ class SocketMessage implements ShouldBroadcastNow
 
     public function broadcastWith(): array
     {
+        Log::info("message", ['socket message' => $this->message->load('sender') ]);
         return [
             // 'message' => new MessageResource($this->message),
             'message' => $this->message->load('sender')
@@ -41,7 +44,9 @@ class SocketMessage implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         if($this->message->group_id){
-            return [new PrivateChannel('message.group.'. $this->message->group_id)];
+            $groupId = intval($this->message->group_id);
+            // Log::info('group_id', ['groupId' => $groupId]);
+            return [new PrivateChannel('message.group.'. $groupId)];
         }
         else{
             $sortedUsers = collect([$this->message->sender_id, $this->message->receiver_id])->sort()->implode('_');

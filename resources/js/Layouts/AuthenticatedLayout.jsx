@@ -17,7 +17,9 @@ function AuthenticatedLayout({ header, children }) {
     const { emit } = useEventBus();
 
     conversations.forEach(conversation => {
-        let channel = 'message.group' + conversation.id;
+        let channel = 'message.group.' + conversation.id;
+
+        // console.log('channel', channel);
 
         if (conversation.is_user) {
             channel = `message.user.${[
@@ -28,12 +30,19 @@ function AuthenticatedLayout({ header, children }) {
 
         Echo.private(channel)
             .listen('SocketMessage', (e) => {
-                console.log("Received event:", e); // Debug the event
+                // console.log("Received event:", e); // Debug the event
 
-                //start here
                 const message = e.message;
 
-                emit('message.created', message);
+                if (message.group_id) {
+
+                    emit('message.created', message, () => {
+                        console.log('message emitted');
+                    });
+                }
+
+
+
                 if (message.sender_id == user.id) {
                     return;
                 }

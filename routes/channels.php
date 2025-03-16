@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
+
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -17,10 +19,11 @@ Broadcast::channel("message.user.{userId1}_{userId2}", function ($user, $userId1
 });
 
 Broadcast::channel('message.group.{groupId}', function ($user, int $groupId){
-    return $user->groups()->where('id', $groupId)->exists();
+    // Log::info("Checking group {$groupId} for user {$user->id}");
+    return $user->groups()->where('group_id', $groupId)->exists();
 });
 
 Broadcast::channel('group.deleted.{groupId}', function ($user, int $groupId) {
-    return $user->groups->contains('id', $groupId) ; 
+    return $user->groups->contains('id', $groupId) ;
 });
 

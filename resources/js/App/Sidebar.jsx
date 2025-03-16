@@ -58,6 +58,7 @@ const Sidebar = () => {
 
     const messageCreate = (message) => {
 
+        // console.log('message', message);
         setLocalConversation(prevConversations => {
             if (!prevConversations || prevConversations.length === 0) {
                 console.log('cannot loop'); // Logs when array is empty
@@ -65,10 +66,13 @@ const Sidebar = () => {
             }
 
             return prevConversations.map(prevConversation => {
+                console.log('prevCon', prevConversation);
+                console.log('message.group_id', message.group_id);
+                console.log('prevConversation.id', prevConversation.id);
                 if (message &&
                     message.group_id &&
-                    prevConversation.group_id &&
-                    message.group_id == prevConversation.group_id
+                    prevConversation.is_group &&
+                    message.group_id == prevConversation.id
                 ) {
                     return {
                         ...prevConversation,
@@ -134,7 +138,8 @@ const Sidebar = () => {
         })
     }
 
-    const [conversation, setConversation] = useState();
+    const [conversation, setConversation] = useState({});
+
     useEffect(() => {
         const offCreated = on('message.created', messageCreate);
         const offDeleted = on('message.deleted', messageDelete);
@@ -158,16 +163,7 @@ const Sidebar = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     {
-    //         console.log('Updated showGroupModal:', showGroupModal);
-    //         showGroupModal && (
-    //             <GroupModal show={showGroupModal} onClose={() => setShowGroupModal(false)} />
-    //         )
-    //     }
-    // }, [showGroupModal]);
-
-    console.log('showGroupModal outside:', showGroupModal);
+    // console.log('showGroupModal outside:', showGroupModal);
 
     useEffect(() => {
         // console.log("page.props.auth.conversations:", page.props.auth.conversations);
@@ -184,8 +180,8 @@ const Sidebar = () => {
                 <div className=' w-9/12 mx-auto text-base-content mt-5 flex justify-between'>
                     <h1 className='text-2xl font-bold'>Chat</h1>
                     <button onClick={(ev) => {
-                        console.log('clicked'); setShowGroupModal(true);
-                        console.log('showGroupModal:', showGroupModal);
+                        setConversation({});
+                        setShowGroupModal(true);
                     }}>
                         <PencilSquareIcon className='h-5 w-5' />
                     </button>
@@ -207,7 +203,7 @@ const Sidebar = () => {
 
                 </div>
             </div>
-            {showGroupModal && <GroupModal conversation={selectedConversation} show={showGroupModal} onClose={() => setShowGroupModal(false)} />}
+            {showGroupModal && <GroupModal conversation={conversation} show={showGroupModal} onClose={() => setShowGroupModal(false)} />}
         </>
     )
 }
