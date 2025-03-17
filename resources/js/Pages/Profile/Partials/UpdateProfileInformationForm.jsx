@@ -1,7 +1,9 @@
+import UserAvatar from '@/App/UserAvatar';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { useEventBus } from '@/EventBus';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 
@@ -11,17 +13,46 @@ export default function UpdateProfileInformation({
     className = '',
 }) {
     const user = usePage().props.auth.user;
+    const { emit } = useEventBus();
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
+            avatar: null,
             email: user.email,
+            _method: "PATCH",
         });
 
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        const formData = new FormData();
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+
+        if (data.avatar) {
+            formData.append("avatar", data.avatar);
+        }
+
+        formData.append("_method", "PATCH"); // Required for Laravel PATCH
+
+        console.log("update data", Object.fromEntries(formData)); // Debug
+
+        // Send FormData using patch
+        axios
+            .patch(route("profile.update"), formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Make sure this header is set
+                },
+            })
+            .then((response) => {
+                console.log("Update successful");
+                emit("toast.show", "Profile updated successfully!");
+            })
+            .catch((error) => {
+                console.log("Update failed", error);
+            });
+
     };
 
     return (
@@ -37,6 +68,16 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
+                <div>
+                    <UserAvatar conversation={user} />
+                </div>
+                <div>
+                    <InputLabel htmlFor="avatar" value="Avatar" />
+
+                    <input id='avatar' type="file" className="mt-1 file-input file-input-md" onChange={(e) => setData('avatar', e.target.files[0])} />
+
+                    <p className='mt-3 text-xs text-gray-500'>Submit photo in 512px &times; 512px</p>
+                </div>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 

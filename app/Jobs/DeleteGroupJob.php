@@ -19,6 +19,7 @@ class DeleteGroupJob implements ShouldQueue
     public function __construct(public int $groupId)
     {
         //
+        $this->groupId = $groupId;
     }
 
     /**
@@ -32,29 +33,28 @@ class DeleteGroupJob implements ShouldQueue
             Log::info("Group not found, maybe already deleted.");
             return;
         }
-
-        Log::info("job start", ['group data' => $group]);
-
-        $name = $this->group->name;
+        // Log::info("job start", ['group data' => $group]);
+        $id = $this->groupId;
+        $name = $group->name;
 
         //remove last message
-        $this->group->last_message_id = null;
-        $this->group->save();
+        $group->last_message_id = null;
+        $group->save();
 
         //remove messages
-        $this->group->load('messages');
-        $this->group->messages->each(function ($message) {
+        $group->load('messages');
+        $group->messages->each(function ($message) {
             $message->delete();
         });
 
         //remove all users
-        $this->group->users()->detach();
+        $group->users()->detach();
 
         //remove group
-        $this->group->delete();
+        $group->delete();
 
         Log::info("job done");
 
-        DeleteGroup::dispatch($groupId, $name);
+        DeleteGroup::dispatch($id, $name);
     }
 }

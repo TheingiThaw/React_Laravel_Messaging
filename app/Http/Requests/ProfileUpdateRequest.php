@@ -16,9 +16,8 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
+            'name' => [$this->has('name') ? 'required' : 'sometimes', 'string', 'max:255'],
+            'email' => [$this->has('email') ? 'required' : 'sometimes',
                 'string',
                 'lowercase',
                 'email',

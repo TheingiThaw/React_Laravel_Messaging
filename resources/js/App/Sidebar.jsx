@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import Conversation from './Conversation';
 import { useEffect, useState } from 'react';
 import TextInput from '@/Components/TextInput';
@@ -153,6 +153,13 @@ const Sidebar = () => {
             });
 
             emit('toast.show', { message: `Group ${name} deleted successfully` });
+
+            if (selectedConversation &&
+                selectedConversation.is_group &&
+                selectedConversation.id == id
+            ) {
+                router.visit(route('/'));
+            }
         })
 
         return () => {

@@ -18,7 +18,7 @@ const UserAvatar = ({ conversation, isUserOnline, message }) => {
                     <span className="text-xl leading-none flex items-center justify-center w-full h-full">
                         {conversation.is_user
                             ? conversation.name?.charAt(0)
-                            : senderUser?.name?.charAt(0) || '?'}
+                            : senderUser?.name?.charAt(0) || conversation.name?.charAt(0)}
                     </span>
                 </div>
             )}

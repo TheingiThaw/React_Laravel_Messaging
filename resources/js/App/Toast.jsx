@@ -21,7 +21,7 @@ const Toast = () => {
     return (
         <div className="toast">
             {toasts.map((toast) => (
-                <div key={toast.uuid} className="alert alert-success">
+                <div key={toast.uuid} className="alert alert-primary">
                     <span>{toast.message}</span>
                 </div>
             ))}

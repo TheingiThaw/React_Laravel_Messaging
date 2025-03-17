@@ -37,13 +37,11 @@ class GroupController extends Controller
 
         $group = Group::create($data);
 
-        Log::info('group', ['group' => $group]);
-
         $group->users()->attach(array_unique([$group->owner_id, ...$user_ids]));
 
-        Log::info('group stored');
+         Log::info('group', ['group' => $group]);
 
-        return back();
+        return response()->json(['group' => $group]);;
     }
 
     /**
@@ -86,7 +84,7 @@ class GroupController extends Controller
             return response()->json(['message' => 'You are not allowed to delete this group'], 403);
         }
 
-        Log::info('group', ['group' => $group]);
+        // Log::info('group', ['group' => $group]);
 
         DeleteGroupJob::dispatch($group->id);
 

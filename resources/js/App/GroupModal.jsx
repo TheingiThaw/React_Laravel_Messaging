@@ -44,7 +44,7 @@ const GroupModal = ({ conversation, show = false, onClose = () => { } }) => {
             return;
         }
         post(route('group.store'), {
-            onSuccess: () => {
+            onSuccess: (group) => {
                 console.log('group stored');
                 emit('toast.show', `Group ${group.name} created successfully`);
                 closeModal();

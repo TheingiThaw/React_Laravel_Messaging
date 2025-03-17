@@ -82,7 +82,7 @@ class User extends Authenticatable
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->avatar,
+            'avatar' => $this->avatar ? Storage::url($this->avatar) : $this->avatar,
             'is_admin' => $this->is_admin,
             'is_user' => true,
             'is_group' => false,
