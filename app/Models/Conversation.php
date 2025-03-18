@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Group;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\Model;
 
 class Conversation extends Model
@@ -29,7 +31,9 @@ class Conversation extends Model
     public static function getConversationsForSidebar(User $user) {
         $users = User::getUserForUser($user);
         $groups = Group::getGroupsForUser($user);
+        // Log::info('user', ['user' => new UserResource(request()->user())]);
         return $users->map(function ($user) {
+            // Log::info('userdata', ['data' => $user->toConversationArray()]);
             return $user->toConversationArray();
         })->concat($groups->map(function ($group) {
             return $group->toConversationArray();

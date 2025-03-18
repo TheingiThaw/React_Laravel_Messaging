@@ -45,6 +45,7 @@ const Sidebar = () => {
             return 0;
         });
         setSortedConversation(sorted);
+        // console.log('sorted', sorted);
     }, [localConversation]);
 
     // Handle Search

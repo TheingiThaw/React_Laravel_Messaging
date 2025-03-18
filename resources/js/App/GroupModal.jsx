@@ -4,7 +4,6 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextareaInput from '@/Components/TextareaInput';
 import TextInput from '@/Components/TextInput';
 import { useEventBus } from '@/EventBus';
-import { Description } from '@headlessui/react';
 import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import UserPicker from './UserPicker';

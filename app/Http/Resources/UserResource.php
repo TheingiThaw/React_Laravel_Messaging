@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,11 +17,16 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (!$this->resource) {
+            return [];
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->avatar ? Storage::url($this->avatar) : null,
+            'avatar' => $this->avatar
+            ? (Str::startsWith($this->avatar, 'storage/') ? $this->avatar : Storage::url($this->avatar))
+            : null,
             'is_user' => true,
             'is_admin' => (bool) $this->is_admin,
             'is_blocked_at' => $this->blocked_at,

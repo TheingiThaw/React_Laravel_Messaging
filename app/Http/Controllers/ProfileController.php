@@ -34,8 +34,8 @@ class ProfileController extends Controller
         $user = $request->user();
         $data = $request->validated();
 
-        Log::info('Received Request:', ['data' => $request->all()]);
-        Log::info('Received Files:', ['files' => $request->file()]);
+        // Log::info('Received Request:', ['data' => $request->all()]);
+        // Log::info('Received Files:', ['files' => $request->file()]);
 
         // Check if avatar is uploaded
         if ($request->hasFile('avatar')) {
@@ -51,8 +51,8 @@ class ProfileController extends Controller
         // unset($data['avatar']);
         $user->fill($data);
 
-        Log::info('update data', ['user' => $user]);
-        Log::info('update data', ['data' => $data]);
+        // Log::info('update data', ['user' => $user]);
+        // Log::info('update data', ['data' => $data]);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

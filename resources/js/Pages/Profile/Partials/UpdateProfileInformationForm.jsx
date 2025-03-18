@@ -15,12 +15,11 @@ export default function UpdateProfileInformation({
     const user = usePage().props.auth.user;
     const { emit } = useEventBus();
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             avatar: null,
-            email: user.email,
-            _method: "PATCH",
+            email: user.email
         });
 
     const submit = (e) => {
@@ -34,16 +33,12 @@ export default function UpdateProfileInformation({
             formData.append("avatar", data.avatar);
         }
 
-        formData.append("_method", "PATCH"); // Required for Laravel PATCH
-
         console.log("update data", Object.fromEntries(formData)); // Debug
 
         // Send FormData using patch
         axios
-            .patch(route("profile.update"), formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data", // Make sure this header is set
-                },
+            .post(route("profile.update"), formData, {
+                headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {
                 console.log("Update successful");

@@ -1,17 +1,23 @@
 
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Echo from '@/echo';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { Dropdown } from 'flowbite-react';
 import { useState } from 'react';
 import { useEventBus } from '@/EventBus';
 import Toast from '@/App/Toast';
 import NewMessageNotification from '@/App/NewMessageNotification';
+import { UserPlusIcon } from '@heroicons/react/16/solid';
+import UserModal from '@/App/UserModal';
+import SecondaryButton from '@/Components/SecondaryButton';
 
 function AuthenticatedLayout({ header, children }) {
     const page = usePage();
     const user = page.props.auth.user;
 
+    // console.log('token', document.querySelector('meta[name="csrf-token"]').content);
+
+    const [showUserModal, setShowUserModal] = useState(false);
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const conversations = page.props.auth.conversations;
     const { emit } = useEventBus();
@@ -76,6 +82,21 @@ function AuthenticatedLayout({ header, children }) {
         }
     });
 
+    const handleLogout = async () => {
+        try {
+
+            axios.post(route('logout'), {}, {
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+
+            router.visit(route('login'));
+        } catch (err) {
+            console.error('error', err);
+        }
+    }
+
     return (
         <>
             <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -91,21 +112,28 @@ function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden sm:ms-6  sm:flex sm:items-center ">
-                                <div className="relative w-24 ">
+                                <div className="flex relative ">
+                                    <SecondaryButton className='text-sm' onClick={() => setShowUserModal(true)}>
+                                        <UserPlusIcon className='w-5 h-5 mr-2' />
+                                        Add New User
+                                    </SecondaryButton>
+
                                     <Dropdown label={<div className="btn btn-ghost btn-circle avatar">
                                         <div className="w-10 rounded-full">
                                             <img
-                                                alt="Tailwind CSS Navbar component"
-                                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                                alt={user.avatar ? `${user.name} avatar` : 'Tailwind CSS Navbar component'}
+                                                src={user.avatar ? `${user.avatar}` : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'} />
                                         </div>
                                     </div>} inline>
                                         <Dropdown.Item>
                                             <Link href={route('profile.edit')}>Profile</Link>
                                         </Dropdown.Item>
                                         <Dropdown.Item>
-                                            <form method="POST" action={route('logout')}>
+                                            {/* <form method="POST" action={route('logout')}>
+                                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]').content} />
                                                 <button type="submit" className="w-full text-left">Log Out</button>
-                                            </form>
+                                            </form> */}
+                                            <button onClick={handleLogout} className="w-full text-left">Log Out</button>
                                         </Dropdown.Item>
                                     </Dropdown>
                                 </div>
@@ -159,6 +187,7 @@ function AuthenticatedLayout({ header, children }) {
             </div>
             <Toast />
             <NewMessageNotification />
+            <UserModal show={showUserModal} onClose={() => setShowUserModal(false)} />
         </>
     );
 }

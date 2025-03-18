@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -82,7 +84,9 @@ class User extends Authenticatable
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->avatar ? Storage::url($this->avatar) : $this->avatar,
+            'avatar' => $this->avatar
+            ? (Str::startsWith($this->avatar, 'storage/') ? $this->avatar : Storage::url($this->avatar))
+            : $this->avatar,
             'is_admin' => $this->is_admin,
             'is_user' => true,
             'is_group' => false,
