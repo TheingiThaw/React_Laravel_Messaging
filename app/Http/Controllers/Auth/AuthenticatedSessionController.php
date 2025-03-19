@@ -51,11 +51,11 @@ class AuthenticatedSessionController extends Controller
 
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'redirect' => route('dashboard', absolute: false)
+                        'redirect' => route('/', absolute: false)
                     ]);
                 }
 
-                return redirect()->intended('dashboard');
+                return redirect()->intended('/');
             }
 
             return back()->withErrors([

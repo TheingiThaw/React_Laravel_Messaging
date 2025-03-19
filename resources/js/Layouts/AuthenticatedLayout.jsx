@@ -113,10 +113,13 @@ function AuthenticatedLayout({ header, children }) {
 
                             <div className="hidden sm:ms-6  sm:flex sm:items-center ">
                                 <div className="flex relative ">
-                                    <SecondaryButton className='text-sm' onClick={() => setShowUserModal(true)}>
-                                        <UserPlusIcon className='w-5 h-5 mr-2' />
-                                        Add New User
-                                    </SecondaryButton>
+                                    {
+                                        user.is_admin &&
+                                        (<SecondaryButton className='text-sm' onClick={() => setShowUserModal(true)}>
+                                            <UserPlusIcon className='w-5 h-5 mr-2' />
+                                            Add New User
+                                        </SecondaryButton>)
+                                    }
 
                                     <Dropdown label={<div className="btn btn-ghost btn-circle avatar">
                                         <div className="w-10 rounded-full">

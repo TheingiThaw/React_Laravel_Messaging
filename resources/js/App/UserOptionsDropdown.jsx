@@ -1,25 +1,37 @@
 import React from 'react'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/react/16/solid'
+import { useEventBus } from '@/EventBus';
 
 const UserOptionsDropdown = ({ conversation }) => {
+
+    const { emit } = useEventBus();
     const onBlockUnblock = (conversation) => {
+        console.log('clicked', conversation);
         if (!conversation.is_user) {
             return;
         }
 
-        axios.post(route('user.blockUnblock'), conversation.id)
-            .then(res => console.log(res))
+        axios.post(route('user.blockUnblock', { user: conversation.id }))
+            .then((res) => {
+                emit('toast.show', res.data.message);
+            })
             .catch(err => console.error(err));
+        console.log('clicked');
     };
 
     const onChangeUserRole = (conversation) => {
+        console.log('clicked', conversation.id);
         if (conversation.is_group) {
             return;
         }
-        axios.post(route('user.changeRole'), conversation.id)
-            .then(res => console.log(res))
+        axios.post(route('user.changeRole', { user: conversation.id }))
+            .then(res => {
+                emit('toast.show', res.data.message);
+            })
             .catch(err => console.error(err));
+
+        console.log('clicked');
     };
 
     return (
@@ -31,21 +43,21 @@ const UserOptionsDropdown = ({ conversation }) => {
                 <MenuItems
                     transition
                     anchor="bottom end"
-                    className="w-52 origin-top-right rounded-xl border border-white/5 bg-black/80 p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+                    className="w-52 origin-top-right rounded-xl border border-white/5 bg-black/90 p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
                 >
                     <MenuItem>
-                        <button onClick={onBlockUnblock} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                            {conversation.blocked_at ? 'Block User' : 'Unlock user'}
+                        <button onClick={() => onBlockUnblock(conversation)} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                            {conversation.is_blocked ? 'Unlock User' : 'Block user'}
                         </button>
                     </MenuItem>
                     <MenuItem>
-                        <button onClick={onChangeUserRole} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+                        <button onClick={() => { console.log('clicked'); onChangeUserRole(conversation) }} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
                             {conversation.is_admin ? 'Make User' : 'Make Admin'}
                         </button>
                     </MenuItem>
                 </MenuItems>
             </Menu>
-        </div>
+        </div >
     )
 }
 
