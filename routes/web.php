@@ -9,7 +9,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 
-Route::middleware('auth')->group(function (){
+Route::middleware(['auth', 'activeUser'])->group(function (){
     Route::get('/', [HomeController::class, 'home'])->name('dashboard');
     Route::get('chat/group/{group}', [MessageController::class,'byGroup'])->name('chat.group');
     Route::get('chat/user/{user}', [MessageController::class,'byUser'])->name('chat.user');

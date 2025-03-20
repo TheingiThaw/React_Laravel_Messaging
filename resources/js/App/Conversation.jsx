@@ -10,7 +10,8 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
     const currentUser = page.props.auth.user;
     let classes = "border-transparent";
 
-    // console.log(conversation);
+    // console.log('blocked', conversation.name, conversation.blocked_at, selectedConversation.blocked_at
+    // );
 
     if (selectedConversation) {
         if (!selectedConversation.is_group &&
@@ -26,6 +27,7 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
         ) {
             classes = "border-blue-500"
         }
+
     }
 
 
@@ -38,7 +40,7 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
             }
             preserveState
         >
-            <div className={"hover:bg-slate-100 conversation-item items-center gap-2 p-2 transition-all border-1-4 cursor-pointer py-2" + classes +
+            <div className={"hover:bg-slate-200 conversation-item items-center gap-2 p-2 transition-all border-1-4 cursor-pointer py-2" + classes +
                 (conversation.is_user && currentUser.is_admin
                     ? "pr-2"
                     : "pr-4"
@@ -52,11 +54,7 @@ const Conversation = ({ conversation, isUserOnline, selectedConversation }) => {
 
                     </div>
 
-                    <div className={'block col-span-3 flex-1 max-w-full overflow-hidden' + (
-                        conversation.is_user && conversation.blocked_at
-                            ? 'opacity-50'
-                            : ''
-                    )} >
+                    <div className={`block col-span-3 flex-1 max-w-full overflow-hidden ${conversation.is_user && conversation.blocked_at ? ' opacity-50' : ''}`} >
                         <div className='flex gap-1 justify-between items-center'>
                             <h2 className='text-ellipsis overflow-hidden font-semibold text-nowrap'>{conversation.name}</h2>
                             <p className=' text-xs text-nowrap mt-1 text-gray-500'>{formatDateShort(new Date(conversation.last_message_date ?? conversation.created_at))}</p>

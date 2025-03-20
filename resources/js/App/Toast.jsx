@@ -19,9 +19,9 @@ const Toast = () => {
     }, [on]);
 
     return (
-        <div className="toast">
+        <div className="toast toast-top toast-center">
             {toasts.map((toast) => (
-                <div key={toast.uuid} className="alert alert-primary">
+                <div key={toast.uuid} className="alert alert-info">
                     <span>{toast.message}</span>
                 </div>
             ))}

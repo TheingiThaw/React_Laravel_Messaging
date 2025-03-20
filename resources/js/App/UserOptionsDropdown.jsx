@@ -7,7 +7,7 @@ const UserOptionsDropdown = ({ conversation }) => {
 
     const { emit } = useEventBus();
     const onBlockUnblock = (conversation) => {
-        console.log('clicked', conversation);
+        // console.log('clicked', conversation);
         if (!conversation.is_user) {
             return;
         }
@@ -17,11 +17,11 @@ const UserOptionsDropdown = ({ conversation }) => {
                 emit('toast.show', res.data.message);
             })
             .catch(err => console.error(err));
-        console.log('clicked');
+        // console.log('clicked');
     };
 
     const onChangeUserRole = (conversation) => {
-        console.log('clicked', conversation.id);
+        // console.log('clicked', conversation.id);
         if (conversation.is_group) {
             return;
         }
@@ -31,7 +31,7 @@ const UserOptionsDropdown = ({ conversation }) => {
             })
             .catch(err => console.error(err));
 
-        console.log('clicked');
+        // console.log('clicked');
     };
 
     return (

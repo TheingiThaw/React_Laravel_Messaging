@@ -30,13 +30,15 @@ class UserController extends Controller
    }
 
    public function changeRole(User $user){
-        Log::info('user', ['user' => $user]);
+        // Log::info('user', ['user' => $user]);
         $user->update(['is_admin' => !(bool)$user->is_admin]);
 
-        $message = 'User '. $user->name .' has been '. ($user->is_admin ? 'Admin' : 'User');
+        $message = 'User "'. $user->name .'" has been '. ($user->is_admin ? 'Admin' : 'User');
 
-        Log::info('after user', ['afterUser' => $user]);
-        return response()->json(['message', $message]);
+        // Log::info('after user', ['afterUser' => $user]);
+        Log::info('message', ['message' => $message]);
+
+        return response()->json(['message' => $message]);
    }
 
 
@@ -48,7 +50,7 @@ class UserController extends Controller
             $user->update(['blocked_at'=> Carbon::now()]);
         }
 
-        $message = 'Account '. $user->name .' has been '. ($user->blocked_at ? 'blocked' : 'Activated');
+        $message = 'Account "'. $user->name .'" has been '. ($user->blocked_at ? 'blocked' : 'Activated');
         Log::info('user_blocked');
 
         return response()->json(['message' => $message]);

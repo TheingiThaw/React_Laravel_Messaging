@@ -92,6 +92,7 @@ class User extends Authenticatable
             'is_user' => true,
             'is_group' => false,
             'is_blocked' => $this->blocked_at !== null,
+            'blocked_at' => $this->blocked_at,
             'last_message' => $this->last_message,
             'last_message_date' => $this->last_message_date ? $this->last_message_date . ' UTC' : null,
         ];

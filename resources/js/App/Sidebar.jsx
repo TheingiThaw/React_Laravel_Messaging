@@ -36,7 +36,7 @@ const Sidebar = () => {
     // Sorting Conversations
     useEffect(() => {
         const sorted = [...localConversation].sort((a, b) => {
-            if (a.blocked_at && b.blocked_at) return a.blocked_at > b.blocked_at ? -1 : 1;
+            if (a.is_blocked && b.is_blocked) return a.is_blocked > b.is_blocked ? -1 : 1;
             if (a.blocked_at) return 1;
             if (b.blocked_at) return -1;
             if (a.last_message_date && b.last_message_date) return b.last_message_date.localeCompare(a.last_message_date);
@@ -180,6 +180,7 @@ const Sidebar = () => {
         }
     }, [page.props.auth.conversations]);
 
+    console.log('sorted', sortedConversation);
 
     return (
         <>
