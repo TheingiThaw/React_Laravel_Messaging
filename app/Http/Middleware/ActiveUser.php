@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ActiveUser
@@ -15,9 +16,10 @@ class ActiveUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if(request()->user()->blocked_at){
-        //     return redirect('login');
-        // }
+        if(request()->user()->blocked_at){
+            Auth::logout();
+            return redirect()->route('login')->with('errorMsg', 'Your account has been blocked!');
+        }
         return $next($request);
     }
 }

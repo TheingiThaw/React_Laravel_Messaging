@@ -21,6 +21,7 @@ class AuthenticatedSessionController extends Controller
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
+            'errorMsg' => session('errorMsg'),
         ]);
     }
 
@@ -29,17 +30,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-    //     $request->authenticate();
-
-    //     $request->session()->regenerate();
-
-    //     // $token = auth()->user()->createToken('laravel_react_messenger')->plainTextToken;
-
-    //     // $request->session()->put('token', $token);
-
-    // return response()->json([
-    //     'redirect' => route('dashboard', absolute: false)
-    // ]);
 
             $credentials = $request->validate([
                 'email' => ['required', 'email'],
