@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Mail\ChangeRoled;
+use App\Mail\UserCreated;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\BlockedUnblocked;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -18,12 +22,14 @@ class UserController extends Controller
             'is_admin' => ['boolean'],
         ]);
 
-        // $password = Str::random(8);
-        $password = '12345678';
+        $password = Str::random(8);
+        // $password = '12345678';
         $data['password'] = bcrypt($password);
         $data['email_verified_at'] = Carbon::now();
 
         $user = User::create($data);
+
+        Mail::to($user)->send(new UserCreated($user, $password));
 
         return back();
 
@@ -36,14 +42,16 @@ class UserController extends Controller
         $message = 'User "'. $user->name .'" has been '. ($user->is_admin ? 'Admin' : 'User');
 
         // Log::info('after user', ['afterUser' => $user]);
-        Log::info('message', ['message' => $message]);
+        // Log::info('message', ['message' => $message]);
+
+        Mail::to($user)->send(new ChangeRoled($user));
 
         return response()->json(['message' => $message]);
    }
 
 
     public function blockUnblock(User $user){
-        Log::info('block user', ['blockuser' => $user]);
+        // Log::info('block user', ['blockuser' => $user]);
         if ($user->blocked_at) {
             $user->update(['blocked_at' => null]);
         } else {
@@ -51,7 +59,9 @@ class UserController extends Controller
         }
 
         $message = 'Account "'. $user->name .'" has been '. ($user->blocked_at ? 'blocked' : 'Activated');
-        Log::info('user_blocked');
+        // Log::info('user_blocked');
+
+        Mail::to($user)->send(new BlockedUnblocked($user));
 
         return response()->json(['message' => $message]);
 

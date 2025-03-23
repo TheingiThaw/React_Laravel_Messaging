@@ -26,6 +26,7 @@ const UserModal = ({ show = false, onClose = () => { } }) => {
 
         post(route('user.store'), {
             onSuccess: (res) => {
+                console.log(res.data);
                 emit('toast.show', res.data);
                 closeModal();
             },
