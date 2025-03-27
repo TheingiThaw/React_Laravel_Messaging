@@ -7,7 +7,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status, errorMsg, canResetPassword }) {
-    console.log('error', errorMsg);
+    // console.log('error', errorMsg);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
@@ -33,7 +33,7 @@ export default function Login({ status, errorMsg, canResetPassword }) {
 
     };
 
-    console.log('error email', errors.email);
+    // console.log('error email', errors.email);
 
     return (
         <GuestLayout>

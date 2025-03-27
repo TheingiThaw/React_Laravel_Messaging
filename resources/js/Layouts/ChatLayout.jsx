@@ -9,8 +9,8 @@ import MessageAttachments from "@/App/MessageAttachments";
 import AttachmentMessagePreview from "@/App/AttachmentMessagePreview";
 
 const ChatLayout = ({ messages, selectedConversation }) => {
-    // console.log(selectedConversation);
-    // console.log(messages);
+
+    console.log('messages', messages);
 
     const messageContainerRef = useRef();
     const { on } = useEventBus();
@@ -34,10 +34,6 @@ const ChatLayout = ({ messages, selectedConversation }) => {
     };
     // console.log('localMessage', localMessage);
 
-    useEffect(() => {
-        // console.log('Preview Attachment:', previewAttachment); // Check the state when it updates
-    }, [previewAttachment]);
-
     const createMessage = (message) => {
         if (selectedConversation
             && selectedConversation.is_group
@@ -50,10 +46,13 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                 return prevMessage;
             });
         }
-        if (selectedConversation
-            && selectedConversation.is_user
+        // console.log('selected', selectedConversation);
+        // console.log('message', messages);
+
+        if (selectedConversation.is_user
             && (selectedConversation.id == message.sender_id || selectedConversation.id == message.receiver_id)) {
             setLocalMessage((prevMessage) => {
+                console.log('user message updated');
                 if (!prevMessage.some((msg) => msg.id === message.id)) {
                     return [...prevMessage, message];
                 }
@@ -92,7 +91,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
         axios.get(route('chat.loadOlder', firstMessage.id))
             .catch(err => console.error(err))
             .then(({ data }) => {
-                console.log(data);
+                console.log([...data.data.reverse()]);
                 if (data.data.length == 0) {
                     setLoadMore(false);
                     return;
@@ -101,11 +100,12 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                 const scrollTop = messageContainerRef.current.scrollTop;
                 const scrollHeight = messageContainerRef.current.scrollHeight;
                 const clientHeight = messageContainerRef.current.clientHeight;
-                const scroll_bottom = scrollHeight - clientHeight - scrollTop;
+                const scroll_bottom = scrollHeight - scrollTop - clientHeight;
                 setScrollBottom(scroll_bottom);
 
                 setLocalMessage((prevMsg) => {
-                    return [...data.data.reverse(), prevMsg];
+                    console.log('prev', prevMsg);
+                    return [...data.data.reverse(), ...prevMsg];
                 })
             });
     }, [localMessage]);
@@ -182,7 +182,7 @@ const ChatLayout = ({ messages, selectedConversation }) => {
                             <div ref={loadMoreMessage}></div>
                             {localMessage.map((message) => (
                                 <Message
-                                    key={message.id}
+                                    key={`${message.id}-${message.created_at}`}
                                     message={message}
                                     selectedConversation={selectedConversation}
                                     onAttachmentClick={(attachments, index) => attachmentClick(attachments, index)}

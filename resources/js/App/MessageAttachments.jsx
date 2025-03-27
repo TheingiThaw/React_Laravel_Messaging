@@ -4,6 +4,8 @@ import React from 'react';
 
 const MessageAttachments = ({ attachments, attachmentClick }) => {
 
+    // console.log(attachments);
+
     return (
         <>
             {attachments && attachments.length > 0 && (
@@ -43,7 +45,7 @@ const MessageAttachments = ({ attachments, attachmentClick }) => {
                             {/* Audio Preview */}
                             {isAudio(attachment) && (
                                 <div className='flex justify-center items-center relative'>
-                                    <audio src={attachment.url} autoPlay controls></audio>
+                                    <audio src={`/storage/${attachment.path}`} autoPlay controls></audio>
                                 </div>
                             )}
 

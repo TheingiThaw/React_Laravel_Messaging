@@ -70,6 +70,7 @@ class MessageController extends Controller
     public function byGroup(Group $group){
         // Log::info("group", ['group' => $group]);
         $messages = Message::where('group_id', $group->id)
+                    ->with('attachments')
                     ->latest()
                     ->paginate(10);
 
@@ -83,7 +84,7 @@ class MessageController extends Controller
 
     public function loadOlder(Message $message){
         try {
-            Log::info("input", ['input' => $message ]);
+            // Log::info("input", ['input' => $message ]);
 
             if ($message->group_id) {
                 $messages = Message::where('created_at', '<', $message->created_at)
@@ -102,7 +103,7 @@ class MessageController extends Controller
                                     ->paginate(10);
             }
 
-            Log::info("messages", ['messages'=> $messages]);
+            // Log::info("messages", ['messages'=> $messages]);
             return $messages;
         } catch (\Exception $e) {
             Log::error("Error loading older messages: " . $e->getMessage());
@@ -111,7 +112,7 @@ class MessageController extends Controller
     }
 
     public function store(StoreMessageRequest $request) {
-        \Log::info($request->all());
+        // \Log::info($request->all());
         try {
             $data = $request->validated();
             $files = $data['attachments'] ?? [];
@@ -179,6 +180,7 @@ class MessageController extends Controller
             $conversation = Conversation::where('last_message_id', $message->id)->first();
             Log::info("conversation", ['conversation' => $conversation]);
         }
+        MessageAttachment::where('message_id', $message->id)->delete();
 
         $message->delete();
 

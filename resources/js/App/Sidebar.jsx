@@ -180,7 +180,7 @@ const Sidebar = () => {
         }
     }, [page.props.auth.conversations]);
 
-    console.log('sorted', sortedConversation);
+    // console.log('sorted', sortedConversation);
 
     return (
         <>

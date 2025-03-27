@@ -4,7 +4,7 @@ import React from 'react'
 
 const AttachmentPreview = ({ file }) => {
 
-    console.log('preview', file);
+    // console.log('preview', file);
 
     return (
         <>

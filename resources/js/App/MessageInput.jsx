@@ -47,7 +47,7 @@ const MessageInput = ({ conversation }) => {
         }
 
         setMessageSending(true);
-        console.log('formdata', formData);
+        // console.log('formdata', formData);
         // console.log('chosen File in function', chosenFile);
 
         axios.post(route('chat.store'), formData, {
@@ -65,7 +65,7 @@ const MessageInput = ({ conversation }) => {
             setChosenFile([]);
             setInputErrorMsg(err?.response?.data?.message || 'An error occured in sending message');
         }).then(res => {
-            console.log('message sent successful', res.data);
+            // console.log('message sent successful', res.data);
             setNewMessage('');
             setMessageSending(false);
             setInputErrorMsg('');

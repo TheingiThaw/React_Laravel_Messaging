@@ -18,7 +18,7 @@ const MessageDropdownOptions = ({ message }) => {
 
         axios.delete(route('chat.delete', { id: message }))
             .then((res) => {
-                console.log(res.data, message);
+                console.log('delete', res.data, message);
                 emit('message.deleted', { message, prevMessage: res.data });
             })
             .catch((err) => console.error(err));

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description')->nullable();
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
-            $table->unsignedBigInteger('last_message_id')->nullable()->constrained('messages')->onDelete('cascade');
+            $table->unsignedBigInteger('last_message_id')->nullable()->constrained('messages')->nullOnDelete();
             $table->timestamps();
         });
 

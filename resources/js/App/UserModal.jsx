@@ -11,7 +11,7 @@ import InputError from '@/Components/InputError';
 import Checkbox from '@/Components/Checkbox';
 
 const UserModal = ({ show = false, onClose = () => { } }) => {
-    console.log('show', show);
+    // console.log('show', show);
     const { emit } = useEventBus();
 
     const { data, setData, processing, put, post, patch, reset, errors } = useForm({

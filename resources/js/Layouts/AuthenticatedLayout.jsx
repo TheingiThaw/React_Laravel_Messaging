@@ -36,17 +36,13 @@ function AuthenticatedLayout({ header, children }) {
 
         Echo.private(channel)
             .listen('SocketMessage', (e) => {
-                // console.log("Received event:", e); // Debug the event
+                console.log("Received event:", e); // Debug the event
 
                 const message = e.message;
 
-                if (message.group_id) {
-
-                    emit('message.created', message, () => {
-                        console.log('message emitted');
-                    });
-                }
-
+                emit('message.created', message, () => {
+                    console.log('message emitted');
+                });
 
 
                 if (message.sender_id == user.id) {
